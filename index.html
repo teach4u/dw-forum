@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>행복한 학교를 위한 대토론회 안건 토론</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#F8F6F3; --surface:#FFFFFF; --ink:#2E3140; --sub:#6E7287; --faint:#A2A5B5; --line:#ECE8E3; --line2:#F4F1ED;
+  --primary:#6C74D9; --primary-d:#575FC2; --soft:#EFF0FC;
+  --peach:#FBDCCB; --lav:#E1DEFA; --mint:#CDEBDF; --sky:#D3E6F7; --rose:#F6D6E3; --butter:#F8EBBE;
+  --gold:#B88A2E; --gold-soft:#FFF8E6; --danger:#C9573E; --ok:#3E8E70; --r:16px;
+  --shadow:0 1px 2px rgba(60,50,40,.04), 0 6px 18px rgba(60,50,40,.05);
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;letter-spacing:-.01em;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  -webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;letter-spacing:inherit}
+input,textarea,select{font-family:inherit;font-size:.95rem;color:var(--ink);letter-spacing:inherit}
+.hidden{display:none!important}
+.ico{width:1em;height:1em;flex:0 0 auto}
+
+/* Header */
+header{background:linear-gradient(115deg,#CFC8F7 0%,#E9D3F2 30%,#FBCDB8 62%,#BFE6D5 100%);position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+header::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.45),transparent 65%);left:-120px;top:-180px}
+.head-in{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:28px 20px 18px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.head-text{flex:1;min-width:0}
+.eyebrow{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.16em;color:#7A72C9;text-transform:uppercase;background:rgba(255,255,255,.7);border-radius:99px;padding:3px 10px}
+header h1{margin:12px 0 4px;font-size:2rem;font-weight:800;letter-spacing:-.035em;line-height:1.25;color:#2E3140}
+.head-sub{margin:0;color:var(--sub);font-size:.98rem}
+.head-sub b{color:#575FC2;font-weight:700}
+.head-r{display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.head-art{flex:0 0 380px;max-width:42%}
+.head-art svg{width:100%;height:auto;display:block}
+.pill{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.85);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.pill i{width:7px;height:7px;border-radius:50%;background:#B9BCC9}
+.pill.open i{background:#5CC59A;box-shadow:0 0 0 3px rgba(92,197,154,.25)}
+.pill.ready i{background:#F2C55C}
+.fsz{display:inline-flex;background:rgba(255,255,255,.85);border-radius:99px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.fsz button{border:0;background:transparent;color:var(--ink);padding:5px 11px;font-size:.78rem;font-weight:600}
+.fsz button:hover{background:#F2F0FC}
+.demo{background:#F2F0FC;color:#575FC2;text-align:center;padding:7px;font-size:.82rem}
+
+/* Tabs */
+nav.tabs{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.tabs-in{max-width:1080px;margin:0 auto;padding:8px 20px;display:flex;gap:6px;overflow-x:auto}
+.tab{border:0;background:none;padding:8px 16px;font-size:.93rem;font-weight:600;color:var(--sub);border-radius:99px;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--ink);background:#F6F4F1}
+.tab.on{color:#fff;background:var(--primary)}
+.tab .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#F08A8A;margin-left:6px;vertical-align:middle}
+.tab.on .dot{background:#fff}
+main{max-width:1080px;margin:0 auto;padding:26px 20px 80px}
+
+/* Common */
+.btn{border:1px solid var(--primary);background:var(--primary);color:#fff;border-radius:10px;padding:8px 15px;font-size:.9rem;font-weight:600;transition:.12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--primary-d);border-color:var(--primary-d)}
+.btn:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:#FAF8F6;border-color:#DCD6CF}
+.btn.navy{background:#E8896B;border-color:#E8896B}
+.btn.navy:hover{background:#D9765A;border-color:#D9765A}
+.btn.danger{background:#fff;color:var(--danger);border-color:#F2CFC5}
+.btn.danger:hover{background:#FFF4F1}
+.btn.sm{padding:5px 11px;font-size:.82rem;border-radius:8px}
+.btn.lg{padding:13px 18px;font-size:1rem;width:100%;justify-content:center;margin-top:18px;border-radius:12px}
+.link{border:0;background:none;color:var(--primary-d);padding:0;font-size:.85rem;font-weight:600}
+.link:hover{text-decoration:underline}
+.link.del{color:var(--danger)}
+.muted{color:var(--sub)} .sm{font-size:.85rem}
+.empty{color:var(--faint);text-align:center;padding:18px;font-size:.92rem}
+.row-end{display:flex;justify-content:flex-end;gap:8px;margin-top:10px;flex-wrap:wrap}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.inp{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:#fff;outline:none;transition:.12s}
+.inp:focus,textarea:focus,select:focus{border-color:#B9BDF0;box-shadow:0 0 0 3px rgba(108,116,217,.14);outline:none}
+textarea.inp{resize:vertical}
+.inp.short{width:140px}
+.lbl{display:block;margin:14px 0 6px;font-weight:600;font-size:.85rem;color:#4A4E60}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:16px}
+.panel.pad{padding:22px}
+.panel h2{margin:0 0 4px;font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.panel h3{margin:0 0 12px;font-size:1.02rem;font-weight:700}
+.panel h3 small,.panel h2 small{font-weight:500;color:var(--sub);font-size:.82rem;margin-left:6px}
+.page-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.page-h h2{margin:0;font-size:1.35rem;font-weight:800;letter-spacing:-.03em}
+.page-h p{margin:4px 0 0;color:var(--sub);font-size:.9rem}
+.notice{display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:12px;padding:12px 16px;margin-bottom:14px;font-size:.9rem;background:#fff;border:1px solid var(--line)}
+.notice b{font-weight:700}
+.notice.open{background:#EEF8F3;border-color:#D3EDE2}
+.notice.ready{background:#FFF9E8;border-color:#F5E7BC}
+.notice.closed{background:#F4F3F1}
+.notice.survey{background:#F2F0FC;border-color:#DEDBF8}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.nick{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:5px 6px 5px 12px}
+.nick label{font-size:.8rem;font-weight:700;color:var(--sub);white-space:nowrap}
+.nick input{border:0;outline:none;width:150px;background:transparent;box-shadow:none!important}
+.tools{display:flex;gap:6px}
+
+/* Category cards */
+.cat{overflow:hidden}
+.cat-head{display:flex;align-items:center;gap:14px;width:100%;border:0;background:#fff;padding:16px 20px;text-align:left;color:var(--ink)}
+.cat-head:hover{background:#FCFBF9}
+.cat-ic{width:46px;height:46px;border-radius:14px;background:var(--acbg);color:var(--ac);display:grid;place-items:center;font-size:1.45rem;flex:0 0 auto}
+.cat-no{font-size:.72rem;font-weight:800;color:var(--ac);letter-spacing:.06em}
+.cat-ttl{flex:1;min-width:0}
+.cat-ttl b{display:block;font-size:1.06rem;font-weight:700;letter-spacing:-.02em}
+.cat-ttl small{display:block;color:var(--sub);font-size:.82rem;margin-top:1px}
+.cat-meta{font-size:.8rem;color:var(--sub);white-space:nowrap;background:#F7F5F2;border-radius:99px;padding:3px 10px}
+.cat-meta b{color:var(--ink);font-weight:700}
+.chev{width:18px;height:18px;color:var(--faint);transition:transform .2s;flex:0 0 auto}
+.panel.open .chev{transform:rotate(180deg)}
+.cat-body{border-top:1px solid var(--line2);padding:4px 20px 20px;background:linear-gradient(180deg,color-mix(in srgb,var(--acbg) 30%,#fff),#fff 120px)}
+
+.agenda{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:14px}
+.ag-head{display:flex;align-items:baseline;gap:10px}
+.ag-no{font-size:.74rem;font-weight:800;color:var(--ac);background:var(--acbg);border-radius:6px;padding:1px 7px;flex:0 0 auto}
+.ag-head h3{margin:0;font-size:1.05rem;font-weight:700;letter-spacing:-.02em}
+.ag-content{margin:8px 0 0;color:#585C70;font-size:.94rem}
+.official{margin:14px 0 0;background:#F6F5FD;border-radius:12px;padding:13px 16px;border:1px solid #E7E5FA}
+.off-label{font-size:.8rem;font-weight:700;color:#575FC2;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.off-label .tag{background:#6C74D9;color:#fff;border-radius:6px;padding:0 7px;font-size:.72rem}
+.official.none{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#FAF9F7;border-style:dashed;border-color:#E6E1DA;color:var(--faint);font-size:.9rem}
+.off-more{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;font-size:.82rem;color:var(--faint)}
+.official + .official{margin-top:8px}
+.rc-edit{display:flex;align-items:center;gap:6px}
+.rc-edit label{display:flex;align-items:center;gap:3px;font-size:.85rem}
+.rc-inp{width:58px;border:1px solid var(--line);border-radius:8px;padding:4px 6px;text-align:right;font-variant-numeric:tabular-nums}
+.official.edit select{border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin:4px 0 8px;background:#fff}
+.official.edit textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 12px;resize:vertical;background:#fff}
+.reacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.react{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;font-size:.84rem;color:#4A4E60;transition:.12s}
+.react b{margin-left:5px;font-weight:700;color:var(--ink)}
+.react:hover:not(:disabled){border-color:#C9CCF3;background:#FAFAFF}
+.react.on{background:#EFF0FC;border-color:#B9BDF0;color:#575FC2}
+.react:disabled{cursor:default;opacity:.75}
+.replies{margin-top:14px;border-top:1px solid var(--line2);padding-top:12px}
+.rep-title{font-size:.8rem;font-weight:700;color:var(--sub);margin-bottom:8px}
+.reply{padding:9px 12px;margin-bottom:6px;background:#FAF9F7;border-radius:10px}
+.reply .rh{display:flex;gap:8px;align-items:baseline;font-size:.82rem}
+.reply .rh b{font-weight:700}
+.reply .rh span{color:var(--faint);font-size:.76rem}
+.reply .rh .del{margin-left:auto;font-size:.76rem}
+.reply .rt{font-size:.93rem;color:#454959}
+.reply-form{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
+.rf-box{flex:1;position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;transition:.12s}
+.rf-box:focus-within{border-color:#B9BDF0;box-shadow:0 0 0 3px rgba(108,116,217,.14)}
+.rf-box textarea{width:100%;border:0;border-radius:12px;padding:10px 12px 4px;resize:vertical;min-height:44px;display:block;box-shadow:none!important;background:transparent}
+.rf-tools{display:flex;align-items:center;gap:4px;padding:2px 8px 6px}
+.emoji-btn{border:0;background:#F6F4F1;border-radius:8px;padding:2px 8px;font-size:.95rem;line-height:1.5}
+.emoji-btn:hover,.emoji-btn.on{background:#EFF0FC}
+.emoji-quick{border:0;background:none;font-size:1.02rem;padding:1px 3px;border-radius:6px;opacity:.85}
+.emoji-quick:hover{background:#F6F4F1;opacity:1}
+.emoji-pop{position:absolute;left:8px;bottom:calc(100% + 6px);z-index:15;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 30px rgba(60,50,40,.14);padding:8px;display:grid;grid-template-columns:repeat(8,1fr);gap:2px;width:max-content}
+.emoji-pop button{border:0;background:none;font-size:1.25rem;width:36px;height:36px;border-radius:8px}
+.emoji-pop button:hover{background:#F2F0FC}
+
+/* Highlights */
+.hl{background:linear-gradient(120deg,#FFF8E6,#FFF3EC);border-color:#F3E4C2;overflow:hidden}
+.hl .cat-head{background:transparent}
+.hl .cat-head:hover{background:rgba(255,255,255,.4)}
+.hl .cat-ic{background:#FCE7B4;color:#B88A2E}
+.hl .cat-body{background:transparent;border-top-color:#F3E4C2}
+.tag-chk{display:inline-block;font-size:.7rem;font-weight:700;color:#B88A2E;background:#fff;border:1px solid #EED9A8;border-radius:99px;padding:0 8px;margin-left:6px;vertical-align:2px}
+.hl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;padding-top:14px}
+.hl-item{background:#fff;border:1px solid #F3E4C2;border-radius:12px;padding:14px 16px}
+.hl-item .n{font-size:.72rem;font-weight:800;color:#B88A2E;letter-spacing:.06em}
+.hl-item h4{margin:2px 0 0;font-size:1rem;font-weight:700}
+.hl-item p{margin:4px 0 0;color:#585C70;font-size:.9rem}
+.chip{display:inline-block;font-size:.74rem;font-weight:600;background:#FFF5DD;color:#8D6A21;border-radius:99px;padding:1px 9px;margin-top:8px}
+
+/* Survey */
+.q{margin-top:18px}
+.qt{font-size:1rem;font-weight:700;margin-bottom:10px;letter-spacing:-.02em}
+.qn{display:inline-block;color:#fff;background:var(--primary);border-radius:6px;padding:0 7px;font-size:.8rem;margin-right:8px;vertical-align:1px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.opt{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;cursor:pointer;background:#fff;font-size:.93rem}
+.opt:hover{border-color:#C9CCF3}
+.opt:has(input:checked){border-color:#B9BDF0;background:#F2F0FC}
+.opt input{accent-color:var(--primary)}
+.done{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;background:#EEF8F3;border:1px solid #D3EDE2;color:var(--ok);font-weight:600;margin-top:14px}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.res-box{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
+.pie-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.pie{width:220px;height:220px}
+.pie-pct{font-size:14px;font-weight:800;fill:#2E3140}
+.pie-empty{font-size:13px;fill:#A2A5B5}
+.legend{list-style:none;margin:0;padding:0;width:100%}
+.legend li{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line2);font-size:.9rem}
+.legend i{width:11px;height:11px;border-radius:4px;flex:0 0 auto}
+.legend span{flex:1}
+.legend b{font-weight:700;font-variant-numeric:tabular-nums}
+.legend em{font-style:normal;color:var(--faint);font-size:.8rem;width:38px;text-align:right}
+.cloud{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;align-content:center;gap:2px 14px;min-height:220px;padding:10px;background:radial-gradient(ellipse at center,#F7F6FE,transparent 70%);border-radius:12px}
+.cloud span{font-weight:700;line-height:1.15;letter-spacing:-.03em;cursor:default}
+.all-ans{margin-top:10px;font-size:.84rem}
+.all-ans summary{cursor:pointer;color:var(--sub);font-weight:600}
+.all-ans div{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.all-ans div span{background:#F6F4F1;border-radius:6px;padding:1px 8px}
+.results.big{gap:24px}
+.results.big .pie{width:min(30vw,46vh);height:min(30vw,46vh)}
+.results.big .legend li{font-size:1.15rem}
+.results.big .qt{font-size:1.5rem}
+.results.big .cloud{min-height:52vh}
+.results.big .res-box{padding:26px}
+.wait{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px;text-align:center;color:var(--sub)}
+.wait b{font-size:2rem;color:var(--ink);font-weight:800}
+
+/* Presentation setup */
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin:14px 0 4px}
+.pick-btn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:10px 12px;text-align:left;font-size:.9rem;font-weight:700;color:var(--ink);transition:.12s}
+.pick-btn .pi{width:32px;height:32px;border-radius:10px;background:var(--acbg);color:var(--ac);display:grid;place-items:center;font-size:1.05rem;flex:0 0 auto}
+.pick-btn small{display:block;font-weight:500;color:var(--sub);font-size:.75rem;margin-top:1px}
+.pick-btn:hover{border-color:#DCD6CF}
+.pick-btn.on{background:color-mix(in srgb,var(--acbg) 55%,#fff);border-color:var(--ac)}
+.pick.small .pick-btn{padding:7px 10px;font-size:.84rem}
+.pick.small .pick-btn .pi{width:26px;height:26px;font-size:.9rem;border-radius:8px}
+.setup{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
+.sel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sel-head b{font-size:.92rem}
+.sel-list{display:flex;flex-direction:column;gap:6px}
+.sel-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:.92rem;background:#fff}
+.sel-item:has(input:checked){background:#F7F6FE;border-color:#D6D8F6}
+.sel-item input{width:16px;height:16px;accent-color:var(--primary)}
+.sel-item span{flex:1}
+.sel-item small{color:var(--sub);font-size:.78rem;white-space:nowrap}
+.switch{display:flex;align-items:center;gap:8px;margin-top:14px;font-weight:600;font-size:.9rem;cursor:pointer}
+.switch input{width:16px;height:16px;accent-color:var(--primary)}
+.hint{font-size:.78rem;color:var(--faint);margin-top:4px}
+
+.addl-pop{margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#FCFBF9;max-height:360px;overflow:auto}
+.addl-group+.addl-group{margin-top:12px}
+.addl-h{display:flex;align-items:center;gap:8px;font-size:.84rem;font-weight:700;color:var(--ac);margin-bottom:6px}
+.addl-h .pi{width:24px;height:24px;border-radius:7px;background:var(--acbg);display:grid;place-items:center;font-size:.85rem}
+.addl-item{cursor:default;background:#fff}
+.sel-item .mini-tag{font-size:.72rem;font-weight:700;color:var(--ac);background:var(--acbg);border-radius:99px;padding:1px 8px;white-space:nowrap;flex:0 0 auto}
+/* Presentation (warm) */
+.pres{position:fixed;inset:0;z-index:100;background:#2B2320;display:flex;flex-direction:column}
+.stage{flex:1;display:grid;place-items:center;overflow:hidden;cursor:pointer}
+.slide{position:relative;border-radius:.7em;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:auto;padding:2.6em 3.2em 2.4em;color:#3B2F2A;cursor:pointer;
+  background-color:#FFFAF4;
+  background-image:radial-gradient(circle at 100% 0,rgba(251,214,196,.55),transparent 32%),radial-gradient(circle at 0 100%,rgba(250,232,176,.45),transparent 30%)}
+.slide.warm{background-image:none;background:linear-gradient(135deg,#FFE0CF 0%,#FFF0D9 55%,#FBE1EA 100%)}
+.pres-bar{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px;color:#E9DCD3;font-size:.85rem;flex-wrap:wrap}
+.pres-bar button{border:1px solid #4A3B35;background:#3A2E2A;color:#F5EAE2;border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600}
+.pres-bar button:hover{background:#4A3B35}
+.pres-bar .sep{width:14px}
+.pres-bar .tip{color:#A8968B;font-size:.76rem;margin-left:8px}
+.sl-cover{position:relative;height:100%;display:flex;align-items:center;gap:2em}
+.sl-cover-text{flex:1;min-width:0}
+.sl-cover-art{flex:0 0 40%}
+.sl-cover-art svg{width:100%;height:auto;display:block}
+.sl-badge{display:inline-flex;align-items:center;gap:.5em;font-size:.82em;font-weight:700;color:#B1573A;background:rgba(255,255,255,.7);border-radius:99px;padding:.25em .9em}
+.sl-cic{width:2.6em;height:2.6em;border-radius:.8em;background:rgba(255,255,255,.75);color:var(--sac);display:grid;place-items:center;font-size:1.3em;margin:1em 0 .4em}
+.sl-cover h1{font-size:2.8em;font-weight:800;letter-spacing:-.035em;margin:.15em 0 .2em;line-height:1.2;color:#3B2A24}
+.sl-cover p{font-size:1.15em;margin:0;color:#7A6158}
+.sl-cover .sl-count{margin-top:1.4em;font-size:.9em;color:#9A7C70}
+.sl-end{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.6em}
+.sl-end .deco{width:9em;height:auto}
+.sl-end h1{font-size:3.3em;font-weight:800;letter-spacing:-.035em;margin:0;white-space:pre-line;line-height:1.3;color:#3B2A24}
+.sl-tag{display:inline-flex;align-items:center;gap:.45em;font-size:.8em;font-weight:700;color:var(--sac);background:var(--sacbg);border-radius:99px;padding:.2em .85em}
+.sl-item h2{font-size:2em;font-weight:800;margin:.45em 0 .35em;line-height:1.25;letter-spacing:-.03em;color:#3B2A24}
+.sl-q{font-size:1.08em;color:#7A6158;margin-bottom:.8em}
+.sl-ans{background:#FFF1E8;border-radius:.6em;padding:.85em 1.1em;font-size:1.1em;border:1px solid #F8DCCB}
+.sl-ans + .sl-ans{margin-top:.5em}
+.sl-ans-h{font-size:.74em;font-weight:800;color:#C46A45;letter-spacing:.04em;margin-bottom:.25em}
+.sl-ans.none{color:#B6A49A;background:rgba(255,255,255,.6);border-style:dashed}
+.sl-reps{margin-top:1em}
+.sl-reps-h{font-size:.78em;font-weight:800;color:#9A7C70;letter-spacing:.04em;margin-bottom:.5em}
+.sl-rep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(15em,1fr));gap:.5em}
+.sl-rep{background:#fff;border:1px solid #F3E4D8;border-radius:.55em;padding:.55em .8em;font-size:.86em;color:#4E3F38}
+.sl-rep b{display:block;font-size:.82em;color:#B1573A;font-weight:700}
+.sl-extra{font-size:1.3em;white-space:pre-line;line-height:1.75;margin-top:.4em;background:rgba(255,255,255,.7);border-radius:.6em;padding:.9em 1.2em;border:1px solid #F3E4D8}
+
+/* Big view */
+.bigview{position:fixed;inset:0;z-index:90;background:var(--bg);overflow:auto;padding:28px 36px}
+.big-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.big-head h1{margin:0;font-size:1.9rem;font-weight:800;letter-spacing:-.03em}
+
+/* Admin */
+.narrow{max-width:400px;margin:40px auto;text-align:center}
+.narrow .inp{text-align:left}
+.narrow .btn{margin-top:12px;width:100%;justify-content:center}
+.login-art{width:120px;margin:0 auto 6px;display:block}
+.subtabs{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-bottom:18px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px}
+.subtab{border:0;background:none;border-radius:9px;padding:7px 13px;font-size:.86rem;font-weight:600;color:var(--sub)}
+.subtab.on{background:#F2F0FC;color:#575FC2}
+.subtabs .link{margin-left:auto;padding-right:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:.88rem}
+.tbl th{background:#FAF8F6;text-align:left;padding:9px 10px;font-weight:700;color:#585C70;font-size:.8rem;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:10px;border-bottom:1px solid var(--line2);vertical-align:top}
+.tbl .num{text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
+.nowrap{white-space:nowrap}
+.warn{color:var(--danger);font-weight:700}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg-btn{border:1px solid var(--line);background:#fff;border-radius:12px;padding:14px;text-align:left}
+.seg-btn b{display:block;font-size:.98rem;font-weight:700}
+.seg-btn small{color:var(--sub);font-size:.8rem}
+.seg-btn.on{border-color:#B9BDF0;background:#F2F0FC;box-shadow:inset 0 0 0 1px #B9BDF0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.stat{border-radius:14px;padding:14px 16px;background:#fff;border:1px solid var(--line)}
+.stat:nth-child(1){background:#F2F0FC;border-color:#E3E0F8}
+.stat:nth-child(2){background:#EEF8F3;border-color:#D8EEE4}
+.stat:nth-child(3){background:#FFF4EE;border-color:#F8E1D4}
+.stat:nth-child(4){background:#FDF1F5;border-color:#F5DCE6}
+.stat:nth-child(5){background:#FFF9E8;border-color:#F5E9C4}
+.stat span{display:block;font-size:.78rem;color:var(--sub);font-weight:600}
+.stat b{display:block;font-size:1.6rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat small{color:var(--faint);font-size:.76rem}
+.rank{list-style:none;padding:0;margin:0;counter-reset:r}
+.rank li{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);counter-increment:r;font-size:.9rem}
+.rank li::before{content:counter(r);width:22px;height:22px;border-radius:7px;background:#F2F0FC;color:#575FC2;display:grid;place-items:center;font-weight:800;font-size:.76rem;flex:0 0 auto}
+.rank li span{flex:1}
+.rank li small{color:var(--sub);white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sum-box textarea{width:100%;min-width:200px;border:1px solid var(--line);border-radius:10px;padding:7px 10px;resize:vertical;font-size:.86rem}
+.cat-h{display:flex;align-items:center;gap:8px;font-size:.92rem;font-weight:800;margin:20px 0 8px;color:var(--ac)}
+.cat-h .pi{width:26px;height:26px;border-radius:8px;background:var(--acbg);display:grid;place-items:center;font-size:.9rem}
+.ai-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(120deg,#ECE9FC,#FCEAE1 60%,#E2F3EC);border:1px solid #E7E2F6;border-radius:16px;padding:18px 22px;margin-bottom:16px}
+.ai-bar .ai-l{display:flex;align-items:center;gap:14px}
+.ai-bar .ai-ic{width:48px;height:48px;border-radius:14px;background:#fff;display:grid;place-items:center;color:#6C74D9;font-size:1.5rem;box-shadow:var(--shadow)}
+.ai-bar b{font-size:1.05rem}
+.ai-bar p{margin:2px 0 0;font-size:.85rem;color:var(--sub)}
+.spinner{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Dialog / toast */
+.dlg{position:fixed;inset:0;z-index:300;background:rgba(46,49,64,.35);display:grid;place-items:center;padding:20px}
+.dlg-box{background:#fff;border-radius:16px;padding:22px;max-width:420px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.dlg-box p{margin:0 0 8px;font-size:.98rem}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:#2E3140;color:#fff;padding:10px 16px;border-radius:10px;z-index:400;transition:.2s;font-size:.88rem;pointer-events:none;max-width:90vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:var(--danger)}
+.loading{text-align:center;padding:60px;color:var(--sub)}
+#saving{position:fixed;left:50%;top:18px;transform:translateX(-50%) translateY(-12px);opacity:0;pointer-events:none;z-index:450;display:flex;align-items:center;gap:10px;background:#fff;color:#575FC2;border:1px solid #DEDBF8;border-radius:99px;padding:9px 18px;font-size:.9rem;font-weight:700;box-shadow:0 8px 24px rgba(60,50,40,.14);transition:.2s}
+#saving.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#saving .spinner{color:#6C74D9}
+body.is-saving .btn,body.is-saving .react{cursor:progress}
+
+@media (max-width:820px){
+  .head-art{display:none}
+  header h1{font-size:1.5rem}
+  .results,.two,.setup{grid-template-columns:1fr}
+  .seg{grid-template-columns:1fr}
+  .cat-meta{display:none}
+  .reply-form{flex-direction:column;align-items:stretch}
+  .agenda{padding:14px}
+  .cat-body{padding:4px 12px 14px}
+  .emoji-pop{grid-template-columns:repeat(6,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="demoBar" class="demo hidden">미리보기(데모) 모드입니다. 입력한 내용은 저장되지 않습니다 · 담당자 비밀번호 1234</div>
+<header>
+  <div class="head-in">
+    <div class="head-text">
+      <span class="eyebrow">2026 School Forum</span>
+      <h1>행복한 학교를 위한 대토론회</h1>
+      <p class="head-sub"><b>안건 토론</b> · 함께 이야기하고, 함께 만들어 갑니다</p>
+      <div class="head-r">
+        <span id="statusChip"></span>
+        <span class="fsz" title="글자 크기"><button onclick="fontSize(-1)">가−</button><button onclick="fontSize(0)">기본</button><button onclick="fontSize(1)">가+</button></span>
+      </div>
+    </div>
+    <div class="head-art" id="headArt"></div>
+  </div>
+</header>
+<nav class="tabs"><div class="tabs-in" id="tabs"></div></nav>
+<main id="main"><div class="loading">불러오는 중…</div></main>
+
+<div id="pres" class="pres hidden">
+  <div class="stage" id="stage"><div class="slide" id="slide"></div></div>
+  <div class="pres-bar">
+    <button onclick="presGo(-1)">◀ 이전</button><span id="presPage"></span><button onclick="presGo(1)">다음 ▶</button>
+    <span class="sep"></span>
+    <button onclick="presZoom(-0.1)">축소</button><span id="presZoomV"></span><button onclick="presZoom(0.1)">확대</button>
+    <span class="sep"></span>
+    <button onclick="toggleFull()">전체화면</button><button onclick="stopPres()">닫기 ✕</button><span class="tip">화면 클릭: 다음 · 오른쪽 클릭: 이전</span>
+  </div>
+</div>
+<div id="big" class="bigview hidden"></div>
+<div id="dlg" class="dlg hidden"></div>
+<div id="saving" role="status" aria-live="polite"><i class="spinner"></i><span>저장 중…</span></div>
+<div id="toast"></div>
+
+<script>
+/* ===================== 설정 ===================== */
+// ↓ Apps Script 웹 앱 배포 주소(…/exec)를 따옴표 안에 넣으세요. 비워 두면 미리보기(데모) 모드로 열립니다.
+const API_URL = 'https://script.google.com/macros/s/AKfycbzyxqkFMQTlKtuK-U55f5e1g4a47gvXNWfWVKbSeDFFUozt04TTZOXOQ5ayR2pXiId4/exec';
+const POLL_MS = 8000;
+const EXPECTED_SERVER = '2026-11-24';   // 이 화면과 짝이 맞는 Code.gs 버전   // 자동 새로고침 간격(밀리초)
+
+const CATEGORIES = [
+  {id:'c1', name:'학교환경/급식', depts:['행정실','관리자','급식실'], color:'#C46A45', bg:'#FBDCCB', icon:'meal'},
+  {id:'c2', name:'학사일정/교원인사', depts:['교무부','관리자'], color:'#6460C4', bg:'#E1DEFA', icon:'cal'},
+  {id:'c3', name:'학년운영', depts:['1학년부','2학년부','3학년부'], color:'#3E8E70', bg:'#CDEBDF', icon:'people'},
+  {id:'c4', name:'교육과정/창체/진로교육', depts:['과정부','진로부'], color:'#3C78AE', bg:'#D3E6F7', icon:'compass'},
+  {id:'c5', name:'생활지도/학생행사', depts:['학생부','인문부','수리과학부','체예부'], color:'#B5527C', bg:'#F6D6E3', icon:'star'},
+  {id:'c6', name:'평가/교수학습지원', depts:['연구부','정보부'], color:'#9A7A1E', bg:'#F8EBBE', icon:'check'},
+  {id:'c7', name:'기타안건', depts:[], color:'#6E7287', bg:'#E6E6EC', icon:'bulb'}
+];
+const ETC_TEXT = '이런 의견도 있어요.';
+const REACTIONS = [{k:'like',e:'👍',t:'공감'},{k:'love',e:'❤️',t:'좋아요'},{k:'more',e:'🙋',t:'더 논의해요'}];
+const COLORS = ['#A9AEF0','#F7B79C','#9ED8C2','#F5D67F','#EFA9C4'];
+const CLOUD_COLORS = ['#575FC2','#C46A45','#3E8E70','#B5527C','#3C78AE','#9A7A1E'];
+const NICK_A = ['조용한','반짝이는','따뜻한','단단한','포근한','용감한','다정한','싱그러운','빛나는','차분한','씩씩한','느긋한'];
+const NICK_B = ['해바라기','소나무','도토리','은행나무','참새','코스모스','별빛','다람쥐','민들레','펭귄','고래','부엉이'];
+const EMOJIS = ['😊','😄','🥰','👍','👏','🙌','🙏','💪','💡','✅','🎉','❤️','🤔','😢','🌱','☕'];
+const QUICK_EMOJIS = ['👍','😊','👏','💡','🙏'];
+const ICONS = {
+  meal:'<path d="M3.5 11h17a8.5 8.5 0 0 1-17 0z"/><path d="M8 7.5c0-1.4 1-1.6 1-3M12 7.5c0-1.4 1-1.6 1-3M16 7.5c0-1.4 1-1.6 1-3"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.2" fill="currentColor"/>',
+  people:'<circle cx="9" cy="8" r="3"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.6 14.2c2.6-.3 4.5 1.4 4.9 4.3"/>',
+  compass:'<circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  star:'<path d="M12 3.5l2.5 5.2 5.7.8-4.1 4 1 5.6L12 16.4 6.9 19.1l1-5.6-4.1-4 5.7-.8z"/>',
+  check:'<rect x="5" y="4.5" width="14" height="16" rx="3"/><path d="M9 4.5V3.5h6v1M8.5 12.5l2.3 2.3 4.7-4.8"/>',
+  bulb:'<path d="M9.5 17.5h5M10.5 20.5h3"/><path d="M12 3.5a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3.5z"/>',
+  trophy:'<path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0z"/><path d="M7.5 6H4.5v1.5a3 3 0 0 0 3.1 3M16.5 6h3v1.5a3 3 0 0 1-3.1 3"/><path d="M12 13.5v3.5M8.5 20.5h7M9.5 17h5"/>',
+  spark:'<path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>'
+};
+function icon(k){ return `<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]||''}</svg>`; }
+const HERO_SVG = `<svg viewBox="0 0 400 230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="200" cy="100" r="96" fill="#fff" opacity=".45"/>
+  <circle cx="330" cy="150" r="40" fill="#D6EEE3" opacity=".9"/>
+  <circle cx="64" cy="150" r="36" fill="#E1DEFA" opacity=".8"/>
+  <ellipse cx="200" cy="216" rx="186" ry="11" fill="#D6EEE3"/>
+  <path d="M150 150l-10 62M250 150l10 62" stroke="#E0CFC2" stroke-width="5" stroke-linecap="round"/>
+  <rect x="110" y="26" width="180" height="128" rx="14" fill="#fff" stroke="#E3DFF7" stroke-width="2"/>
+  <rect x="124" y="38" width="64" height="9" rx="4.5" fill="#E1DEFA"/><rect x="194" y="38" width="28" height="9" rx="4.5" fill="#FCE3D6"/>
+  <g transform="rotate(-4 145.0 78.0)"><rect x="124" y="60" width="42" height="36" rx="4" fill="#FBDCCB"/><path d="M131 74h26M131 81h20" stroke="rgba(46,49,64,.18)" stroke-width="2.4" stroke-linecap="round"/><circle cx="145.0" cy="65" r="2.6" fill="#fff"/></g><g transform="rotate(3 199.0 76.0)"><rect x="178" y="58" width="42" height="36" rx="4" fill="#CDEBDF"/><path d="M190 76l6 6 11-12" stroke="#3E8E70" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="199.0" cy="63" r="2.6" fill="#fff"/></g><g transform="rotate(-2 253.0 78.0)"><rect x="232" y="60" width="42" height="36" rx="4" fill="#F8EBBE"/><path d="M239 74h26M239 81h20" stroke="rgba(46,49,64,.18)" stroke-width="2.4" stroke-linecap="round"/><circle cx="253.0" cy="65" r="2.6" fill="#fff"/></g><g transform="rotate(3 147.0 122.0)"><rect x="126" y="104" width="42" height="36" rx="4" fill="#E1DEFA"/><path d="M133 118h26M133 125h20" stroke="rgba(46,49,64,.18)" stroke-width="2.4" stroke-linecap="round"/><circle cx="147.0" cy="109" r="2.6" fill="#fff"/></g><g transform="rotate(-3 201.0 122.0)"><rect x="180" y="104" width="42" height="36" rx="4" fill="#F6D6E3"/><path d="M187 118h26M187 125h20" stroke="rgba(46,49,64,.18)" stroke-width="2.4" stroke-linecap="round"/><circle cx="201.0" cy="109" r="2.6" fill="#fff"/></g><g transform="rotate(4 255.0 122.0)"><rect x="234" y="104" width="42" height="36" rx="4" fill="#D3E6F7"/><path d="M241 118h26M241 125h20" stroke="rgba(46,49,64,.18)" stroke-width="2.4" stroke-linecap="round"/><circle cx="255.0" cy="109" r="2.6" fill="#fff"/></g>
+  <g>
+    <rect x="34" y="194" width="70" height="16" rx="3" fill="#A9AEF0"/><path d="M42 198v8" stroke="#fff" stroke-width="2" opacity=".7"/>
+    <rect x="42" y="178" width="58" height="16" rx="3" fill="#F7B79C"/><path d="M50 182v8" stroke="#fff" stroke-width="2" opacity=".7"/>
+    <rect x="38" y="162" width="62" height="16" rx="3" fill="#9ED8C2"/><path d="M46 166v8" stroke="#fff" stroke-width="2" opacity=".7"/>
+    <g transform="rotate(-12 70 154)"><rect x="46" y="150" width="46" height="7" rx="2" fill="#F5D67F"/><path d="M92 150l8 3.5-8 3.5z" fill="#F6CDB3"/><rect x="42" y="150" width="6" height="7" rx="2" fill="#EFA9C4"/></g>
+  </g>
+  <g>
+    <ellipse cx="322" cy="150" rx="9" ry="26" fill="#86CDB3" transform="rotate(-28 322 150)"/>
+    <ellipse cx="350" cy="146" rx="9" ry="28" fill="#9ED8C2" transform="rotate(24 350 146)"/>
+    <ellipse cx="336" cy="138" rx="8" ry="30" fill="#BFE5D6"/>
+    <path d="M336 168v-30" stroke="#6FBF9F" stroke-width="2"/>
+    <rect x="312" y="172" width="48" height="10" rx="4" fill="#F2A283"/>
+    <path d="M316 182h40l-5 30h-30z" fill="#F7B79C"/>
+  </g>
+  <g><rect x="22" y="40" width="58" height="36" rx="17" fill="#FFF3CF"/><path d="M58 75l6 11 4-11z" fill="#FFF3CF"/><circle cx="51" cy="55" r="8" fill="#F5C443"/><rect x="47.5" y="62" width="7" height="6" rx="1.5" fill="#D9A93A"/><path d="M51 42v-3M61 46l2-2M41 46l-2-2" stroke="#F5C443" stroke-width="2" stroke-linecap="round"/></g>
+  <g><rect x="318" y="30" width="58" height="36" rx="17" fill="#FCE3EC"/><path d="M332 65l-4 11 12-11z" fill="#FCE3EC"/><path d="M347 42c-3-4-10-2-9 3 1 4 9 9 9 9s8-5 9-9c1-5-6-7-9-3z" fill="#EFA0B9"/></g>
+  <path d="M100 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#F5D67F"/>
+  <path d="M306 182l1.6 4 4 1.6-4 1.6-1.6 4-1.6-4-4-1.6 4-1.6z" fill="#A9AEF0"/>
+  <g><circle cx="300" cy="16" r="3" fill="#9ED8C2"/><circle cx="20" cy="110" r="2.5" fill="#F7B79C"/><circle cx="384" cy="100" r="3" fill="#F5D67F"/><circle cx="110" cy="176" r="2.5" fill="#EFA9C4"/></g>
+</svg>`;
+const END_SVG = `<svg class="deco" viewBox="0 0 160 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="80" cy="48" r="30" fill="#FFD9A8" opacity=".55"/><circle cx="80" cy="48" r="20" fill="#FFC98F"/>
+  <path d="M80 41c-3-4-10-2-9 3 1 4 9 9 9 9s8-5 9-9c1-5-6-7-9-3z" fill="#fff"/>
+  <g fill="#F4A98C"><circle cx="30" cy="30" r="4"/><circle cx="130" cy="26" r="3" fill="#A9AEF0"/><circle cx="140" cy="62" r="4" fill="#9ED8C2"/><circle cx="20" cy="66" r="3" fill="#EFA9C4"/></g>
+  <path d="M45 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#F5D67F"/><path d="M118 70l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z" fill="#F5D67F"/>
+</svg>`;
+const CHEV = '<svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5"/></svg>';
+
+/* ===================== 저장소·상태 ===================== */
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v===null?d:v; }catch(e){ return d; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+};
+let deviceId = store.get('dtf_device','');
+if(!deviceId){ deviceId='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); store.set('dtf_device',deviceId); }
+
+let S = null, lastJson = '', pending = false, busy = 0;
+const ui = {
+  tab:'discuss', open:new Set(), answerEdit:{}, drafts:{nick:store.get('dtf_nick','')},
+  fs:Number(store.get('dtf_fs',16))||16, big:false, aiBusy:false,
+  pw:null, adTab:'agendas', adCat:'c1', editAg:null, editHl:null, svInit:false,
+  pres:{cat:'c1', sel:{}, showReplies:true, slides:[], idx:0, zoom:1, on:false, addl:{}, addOpen:false}
+};
+
+/* ===================== 통신 ===================== */
+async function api(action, p){
+  p = Object.assign({}, p||{});
+  if(ui.pw && p.pw === undefined) p.pw = ui.pw;
+  busy++;
+  try{
+    if(!API_URL) return await mockApi(action, Object.assign(p, {deviceId}));
+    const res = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(Object.assign({action, deviceId}, p))});
+    const j = await res.json();
+    if(!j.ok) throw new Error(j.error || '오류가 발생했습니다.');
+    return j.data;
+  } finally { busy--; }
+}
+let saving = false;
+async function call(action, p, okMsg){
+  if(saving){ toast('저장 중입니다. 잠시만 기다려 주세요.'); return false; }
+  saving = true;
+  const box = document.getElementById('saving');
+  box.querySelector('span').textContent = action==='aiSummary' ? 'AI가 총평을 작성하는 중…' : '저장 중…';
+  const t = setTimeout(()=>box.classList.add('show'), 250);
+  document.body.classList.add('is-saving');
+  try{ const d = await api(action, p); setData(d, true); if(okMsg) toast(okMsg); return true; }
+  catch(e){
+    let m = e.message || '연결에 실패했습니다.';
+    if(/알 수 없는 요청/.test(m)) m = '서버(Apps Script)가 이전 버전입니다. Code.gs를 붙여넣은 뒤 [배포 관리 → 새 버전]으로 다시 배포해 주세요.';
+    toast(m, true); return false;
+  }
+  finally{ clearTimeout(t); box.classList.remove('show'); document.body.classList.remove('is-saving'); saving = false; }
+}
+function setData(d, force){
+  const j = JSON.stringify(d);
+  if(!force && j === lastJson) return;
+  lastJson = j; S = d;
+  if(!force && isTyping()){ pending = true; return; }
+  render();
+}
+async function poll(){
+  if(busy || document.hidden) return;
+  try{ setData(await api('getAll'), false); }catch(e){}
+}
+
+/* ===================== 도우미 ===================== */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function nl(s){ return esc(s).replace(/\n/g,'<br>'); }
+function cut(s,n){ s=String(s||''); return s.length>n? s.slice(0,n)+'…' : s; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function fmt(iso){ const d=new Date(iso); if(isNaN(d)) return ''; return `${d.getMonth()+1}.${d.getDate()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
+function catOf(id){ return CATEGORIES.find(c=>c.id===id); }
+function catNo(c){ return pad2(CATEGORIES.indexOf(c)+1); }
+function deptText(c){ return c.depts.length ? '담당: '+c.depts.join(', ') : ETC_TEXT; }
+function val(key){ const el=document.querySelector(`[data-draft="${key}"]`); return el ? el.value : (ui.drafts[key]||''); }
+function isTyping(){ const a=document.activeElement; if(!a || !a.closest || !a.closest('#main')) return false;
+  return a.tagName==='TEXTAREA' || a.tagName==='SELECT' || (a.tagName==='INPUT' && !['checkbox','radio','button'].includes(a.type)); }
+function toast(msg, err){ const t=document.getElementById('toast'); t.textContent=msg; t.className='show'+(err?' err':''); clearTimeout(toast._t); toast._t=setTimeout(()=>t.className='',2800); }
+function rc(id){ return (S.reactions[id]||{like:0,love:0,more:0}); }
+function repliesOf(id){ return S.replies.filter(r=>r.agendaId===id); }
+function nickName(){ return (ui.drafts.nick||'').trim(); }
+function randomNick(){
+  const n = NICK_A[Math.floor(Math.random()*NICK_A.length)]+' '+NICK_B[Math.floor(Math.random()*NICK_B.length)];
+  ui.drafts.nick = n; store.set('dtf_nick', n);
+  const el=document.querySelector('[data-draft="nick"]'); if(el) el.value=n;
+  return n;
+}
+function fontSize(d){ ui.fs = d===0 ? 16 : Math.max(13, Math.min(24, ui.fs + d)); store.set('dtf_fs', ui.fs); document.documentElement.style.fontSize = ui.fs+'px'; }
+function ask(msg){
+  return new Promise(res=>{
+    const d = document.getElementById('dlg');
+    d.innerHTML = `<div class="dlg-box"><p>${nl(msg)}</p><div class="row-end"><button class="btn ghost" id="dlgNo">취소</button><button class="btn" id="dlgYes">확인</button></div></div>`;
+    d.classList.remove('hidden');
+    const done = v=>{ d.classList.add('hidden'); res(v); };
+    d.querySelector('#dlgNo').onclick = ()=>done(false);
+    d.querySelector('#dlgYes').onclick = ()=>done(true);
+  });
+}
+function surveyVisible(){ return S && ['running','ended'].includes(S.survey.status) && (S.survey.q1 || S.survey.q2); }
+
+/* ===================== 렌더링 ===================== */
+function render(){
+  pending = false;
+  if(!S) return;
+  if(ui.tab==='survey' && !surveyVisible()) ui.tab = 'discuss';
+  const tabs = [['discuss','안건 토론']];
+  if(surveyVisible()) tabs.push(['survey','실시간 설문'+(S.survey.status==='running' && !S.survey.answered ? '<span class="dot"></span>' : '')]);
+  tabs.push(['present','발표 모드'],['admin','담당자']);
+  document.getElementById('tabs').innerHTML = tabs.map(([k,t])=>`<button class="tab ${ui.tab===k?'on':''}" onclick="goTab('${k}')">${t}</button>`).join('');
+  const labels={ready:'토론 준비 중', open:'토론 진행 중', closed:'토론 마감'};
+  document.getElementById('statusChip').innerHTML = `<span class="pill ${S.status}"><i></i>${labels[S.status]||''}</span>`;
+  const m = document.getElementById('main'), y = window.scrollY;
+  const views = {discuss:viewDiscuss, survey:viewSurvey, present:viewPresent, admin:viewAdmin};
+  m.innerHTML = views[ui.tab]();
+  m.querySelectorAll('[data-draft]').forEach(el=>{ const k=el.dataset.draft; if(ui.drafts[k]!==undefined) el.value = ui.drafts[k]; });
+  m.querySelectorAll('input[type=radio][data-radio]').forEach(el=>{ el.checked = ui.drafts[el.dataset.radio]===el.value; });
+  window.scrollTo(0, y);
+  if(ui.pres.on) renderSlide();
+  if(ui.big) renderBig();
+}
+function goTab(t){ ui.tab=t; render(); window.scrollTo(0,0); }
+
+function notices(){
+  const t = {
+    ready:'<b>토론 준비 중</b> · 담당자가 토론을 열면 답글과 반응을 남길 수 있습니다. 부서 공식답변은 미리 작성할 수 있습니다.',
+    open:'<b>토론 진행 중</b> · 세부안건마다 자유롭게 의견을 남겨 주세요.',
+    closed:'<b>토론 마감</b> · 입력은 닫혔으며, 내용은 계속 확인할 수 있습니다.'
+  }[S.status];
+  let h = `<div class="notice ${S.status}"><span>${t}</span></div>`;
+  if(surveyVisible() && ui.tab!=='survey'){
+    const sv = S.survey;
+    if(sv.status==='running' && !sv.answered) h += `<div class="notice survey"><span><b>실시간 설문이 시작되었습니다.</b> 잠시 참여해 주세요.</span><button class="btn sm" onclick="goTab('survey')">설문 참여</button></div>`;
+    else if(sv.status==='ended') h += `<div class="notice survey"><span><b>실시간 설문 결과가 공개되었습니다.</b></span><button class="btn sm" onclick="goTab('survey')">결과 보기</button></div>`;
+  }
+  return h;
+}
+
+/* ----- 안건 토론 ----- */
+function viewDiscuss(){
+  let h = `<div class="toolbar">
+    <div class="nick"><label>닉네임</label><input data-draft="nick" maxlength="20" placeholder="자유롭게 입력"><button class="btn ghost sm" onclick="randomNick()">랜덤</button></div>
+    <div class="tools"><button class="btn ghost sm" onclick="expandAll(true)">전체 펼치기</button><button class="btn ghost sm" onclick="expandAll(false)">전체 접기</button></div>
+  </div>`;
+  h += notices() + highlightCard();
+  CATEGORIES.forEach(c=> h += catCard(c));
+  return h;
+}
+function toggleCard(id){ ui.open.has(id) ? ui.open.delete(id) : ui.open.add(id); render(); }
+function expandAll(on){ ui.open = on ? new Set(['hl', ...CATEGORIES.map(c=>c.id)]) : new Set(); render(); }
+
+function highlightCard(){
+  const open = ui.open.has('hl'), list = S.highlights;
+  return `<section class="panel hl ${open?'open':''}">
+    <button class="cat-head" onclick="toggleCard('hl')"><span class="cat-ic">${icon('trophy')}</span>
+      <span class="cat-ttl"><b>2026학년도 우수사항<span class="tag-chk">확인</span></b><small>올해의 우수사항을 확인하는 항목입니다</small></span>
+      <span class="cat-meta"><b>${list.length}</b>건</span>${CHEV}</button>
+    ${open ? `<div class="cat-body">${list.length ? `<div class="hl-grid">${list.map((x,i)=>`<div class="hl-item"><div class="n">NO. ${pad2(i+1)}</div><h4>${esc(x.title)}</h4>${x.content?`<p>${nl(x.content)}</p>`:''}${x.dept?`<span class="chip">${esc(x.dept)}</span>`:''}</div>`).join('')}</div>` : '<p class="empty">등록된 우수사항이 없습니다.</p>'}</div>` : ''}
+  </section>`;
+}
+
+function catCard(c){
+  const ags = S.agendas.filter(a=>a.catId===c.id);
+  const rcount = S.replies.filter(r=>ags.some(a=>a.id===r.agendaId)).length;
+  const open = ui.open.has(c.id);
+  return `<section class="panel cat ${open?'open':''}" style="--ac:${c.color};--acbg:${c.bg}">
+    <button class="cat-head" onclick="toggleCard('${c.id}')"><span class="cat-ic">${icon(c.icon)}</span>
+      <span class="cat-ttl"><span class="cat-no">AGENDA ${catNo(c)}</span><b>${esc(c.name)}</b><small>${esc(deptText(c))}</small></span>
+      <span class="cat-meta">세부안건 <b>${ags.length}</b> · 답글 <b>${rcount}</b></span>${CHEV}</button>
+    ${open ? `<div class="cat-body">${ags.length ? ags.map((a,i)=>agendaBlock(a,i,c)).join('') : '<p class="empty">등록된 세부안건이 없습니다.</p>'}</div>` : ''}
+  </section>`;
+}
+
+function agendaBlock(a, i, c){
+  const ans = ansOf(a.id), reps = repliesOf(a.id), st = S.status;
+  let off = '';
+  if(c.depts.length){
+    const ed = ui.answerEdit[a.id];
+    const remaining = c.depts.filter(d=>!ans.some(x=>x.dept===d));
+    off = ans.map(x=> (ed && ed.dept===x.dept) ? answerForm(a, x.dept, []) :
+      `<div class="official"><div class="off-label"><span class="tag">공식답변</span>${esc(x.dept)}</div><div>${nl(x.content)}</div>
+        ${st!=='closed' ? `<div class="row-end" style="margin-top:4px;gap:12px"><button class="link" onclick="editAnswer('${a.id}','${esc(x.dept)}')">수정</button><button class="link del" onclick="delAnswer('${a.id}','${esc(x.dept)}')">삭제</button></div>` : ''}</div>`).join('');
+    if(ed && !ed.dept) off += answerForm(a, null, remaining);
+    else if(!ans.length) off += `<div class="official none"><span>공식답변 준비 중입니다.</span>${st!=='closed' ? `<button class="btn ghost sm" onclick="editAnswer('${a.id}')">공식답변 작성</button>` : ''}</div>`;
+    else if(remaining.length && st!=='closed' && !ed) off += `<div class="off-more"><button class="link" onclick="editAnswer('${a.id}')">+ 다른 부서 공식답변 추가</button><span>미답변: ${esc(remaining.join(', '))}</span></div>`;
+  }
+  const mine = S.myReactions[a.id] || [];
+  const reacts = REACTIONS.map(r=>`<button class="react ${mine.includes(r.k)?'on':''}" ${st!=='open'?'disabled':''} onclick="react('${a.id}','${r.k}')">${r.e} ${r.t}<b>${rc(a.id)[r.k]||0}</b></button>`).join('');
+  const repHtml = reps.map(r=>`<div class="reply"><div class="rh"><b>${esc(r.nickname)}</b><span>${fmt(r.createdAt)}</span>${r.mine?`<button class="link del" onclick="delReply('${r.id}')">삭제</button>`:''}</div><div class="rt">${nl(r.content)}</div></div>`).join('');
+  const form = st==='open' ? `<div class="reply-form"><div class="rf-box"><textarea data-draft="r_${a.id}" rows="2" maxlength="500" placeholder="의견을 남겨 주세요 (닉네임으로 표시됩니다)"></textarea>
+      <div class="rf-tools"><button class="emoji-btn ${ui.emoji===a.id?'on':''}" title="이모티콘" onclick="toggleEmoji('${a.id}')">😊 ▾</button>${QUICK_EMOJIS.map(e=>`<button class="emoji-quick" onclick="insertEmoji('${a.id}','${e}')">${e}</button>`).join('')}</div>
+      ${ui.emoji===a.id ? `<div class="emoji-pop">${EMOJIS.map(e=>`<button onclick="insertEmoji('${a.id}','${e}')">${e}</button>`).join('')}</div>` : ''}</div>
+      <button class="btn" onclick="sendReply('${a.id}')">등록</button></div>` : '';
+  return `<article class="agenda">
+    <div class="ag-head"><span class="ag-no">${pad2(i+1)}</span><h3>${esc(a.title)}</h3></div>
+    ${a.content ? `<div class="ag-content">${nl(a.content)}</div>` : ''}
+    ${off}
+    <div class="reacts">${reacts}</div>
+    <div class="replies"><div class="rep-title">답글 ${reps.length}</div>${repHtml}${form}</div>
+  </article>`;
+}
+
+function ansCell(a, c){
+  const list = ansOf(a.id);
+  if(!c.depts.length) return '—';
+  if(!list.length) return '<span class="warn">미답변</span>';
+  const rem = c.depts.filter(d=>!list.some(x=>x.dept===d));
+  return esc(list.map(x=>x.dept).join(', ')) + (rem.length && c.id==='c3' ? `<div class="muted sm">미답변: ${esc(rem.join(', '))}</div>` : '');
+}
+function ansOf(id){ return (S && S.answers && S.answers[id]) || []; }
+function answerForm(a, dept, options){
+  return `<div class="official edit"><div class="off-label">${dept ? esc(dept)+' 공식답변 수정' : '공식답변 작성'}</div>
+    ${dept ? '' : `<select data-draft="ad_${a.id}">${options.map(d=>`<option value="${esc(d)}">${esc(d)}</option>`).join('')}</select>`}
+    <textarea data-draft="a_${a.id}" rows="5" placeholder="부서의 공식답변을 입력하세요.${dept ? ' 비우고 저장하면 이 부서의 공식답변이 삭제됩니다.' : ''}"></textarea>
+    <div class="row-end"><button class="btn ghost sm" onclick="cancelAnswer('${a.id}')">취소</button><button class="btn sm" onclick="saveAnswer('${a.id}')">저장</button></div></div>`;
+}
+function editAnswer(id, dept){
+  const a = S.agendas.find(x=>x.id===id), c = catOf(a.catId), list = ansOf(id);
+  const cur = dept ? list.find(x=>x.dept===dept) : null;
+  ui.answerEdit[id] = {dept: dept || null};
+  ui.drafts['a_'+id] = cur ? cur.content : '';
+  if(!dept) ui.drafts['ad_'+id] = c.depts.filter(d=>!list.some(x=>x.dept===d))[0] || c.depts[0];
+  render();
+}
+async function delAnswer(id, dept){
+  if(!(await ask(`${dept}의 공식답변을 삭제할까요?\n삭제하면 되돌릴 수 없습니다.`))) return;
+  if(await call('saveAnswer', {agendaId:id, dept, content:''}, `${dept} 공식답변을 삭제했습니다.`)){ delete ui.answerEdit[id]; render(); }
+}
+function cancelAnswer(id){ delete ui.answerEdit[id]; render(); }
+async function saveAnswer(id){
+  const ed = ui.answerEdit[id] || {};
+  const dept = ed.dept || val('ad_'+id), content = val('a_'+id).trim();
+  const exists = ansOf(id).some(x=>x.dept===dept);
+  if(!content && !exists){ toast('공식답변 내용을 입력해 주세요.', true); return; }
+  if(!content && !(await ask(`내용이 비어 있습니다. ${dept}의 공식답변을 삭제할까요?`))) return;
+  if(await call('saveAnswer', {agendaId:id, dept, content}, content ? `${dept} 공식답변을 저장했습니다.` : '공식답변을 삭제했습니다.')){
+    delete ui.answerEdit[id]; delete ui.drafts['a_'+id]; render();
+  }
+}
+async function sendReply(id){
+  const content = val('r_'+id).trim();
+  if(!content){ toast('답글 내용을 입력해 주세요.', true); return; }
+  let nick = nickName(), auto = false;
+  if(!nick){ nick = randomNick(); auto = true; }
+  if(await call('addReply', {agendaId:id, nickname:nick, content}, auto ? `랜덤 닉네임 '${nick}'(으)로 등록했습니다.` : '답글을 등록했습니다.')){
+    ui.drafts['r_'+id] = ''; ui.emoji = null; render();
+  }
+}
+function toggleEmoji(id){ ui.emoji = ui.emoji===id ? null : id; render(); }
+function insertEmoji(id, e){
+  const el = document.querySelector(`[data-draft="r_${id}"]`);
+  if(!el) return;
+  const v = el.value, st = el.selectionStart ?? v.length, en = el.selectionEnd ?? v.length;
+  el.value = v.slice(0, st) + e + v.slice(en);
+  ui.drafts['r_'+id] = el.value;
+  el.focus(); const p = st + e.length; try{ el.setSelectionRange(p, p); }catch(err){}
+}
+document.addEventListener('click', e=>{ if(ui.emoji && !e.target.closest('.rf-box')){ ui.emoji = null; render(); } });
+function react(id, k){ call('toggleReaction', {agendaId:id, type:k}); }
+async function delReply(id){ if(await ask('이 답글을 삭제할까요?')) call('deleteReply', {id}, '삭제했습니다.'); }
+
+/* ----- 실시간 설문 ----- */
+function viewSurvey(){
+  const sv = S.survey;
+  let h = `<div class="page-h"><div><h2>실시간 설문</h2><p>${sv.status==='running' ? '설문이 진행 중입니다. 결과는 설문 종료 후 공개됩니다.' : '설문이 종료되어 결과가 공개되었습니다.'}</p></div>
+    ${sv.status==='ended' ? '<button class="btn ghost" onclick="openBig()">크게 보기</button>' : ''}</div>`;
+  if(sv.status==='running'){
+    h += '<section class="panel pad">';
+    if(!sv.answered){
+      if(sv.q1) h += `<div class="q" style="margin-top:0"><div class="qt"><span class="qn">Q1</span>${esc(sv.q1)}</div><div class="opts">${sv.options.map(o=>`<label class="opt"><input type="radio" name="sv_q1" value="${esc(o)}" data-radio="sv_ans1" onchange="ui.drafts.sv_ans1=this.value"><span>${esc(o)}</span></label>`).join('')}</div></div>`;
+      if(sv.q2) h += `<div class="q"><div class="qt"><span class="qn">Q2</span>${esc(sv.q2)}</div><input class="inp" data-draft="sv_ans2" maxlength="30" placeholder="짧게 한두 단어로 적어 주세요"></div>`;
+      h += '<button class="btn lg" onclick="submitSurvey()">응답 제출</button>';
+    } else {
+      h += `<div class="done" style="margin-top:0">✓ 응답이 제출되었습니다. 결과는 설문 종료 후 이 화면에서 공개됩니다.</div>`;
+    }
+    h += `<div class="wait"><span>현재 응답</span><b>${sv.total}명</b></div></section>`;
+  } else {
+    h += `<section class="panel pad"><div class="row-between" style="margin-bottom:14px"><h3 style="margin:0">설문 결과 <small>응답 ${sv.total}명</small></h3></div>${surveyResults(false)}</section>`;
+  }
+  return h;
+}
+async function submitSurvey(){
+  const sv = S.survey, q1 = ui.drafts.sv_ans1 || '', q2 = val('sv_ans2').trim();
+  if(sv.q1 && !q1){ toast('Q1 보기를 선택해 주세요.', true); return; }
+  if(sv.q2 && !q2){ toast('Q2에 답을 입력해 주세요.', true); return; }
+  if(await call('submitSurvey', {q1, q2}, '응답을 제출했습니다.')){ ui.drafts.sv_ans2=''; render(); }
+}
+function surveyResults(big){
+  const sv = S.survey;
+  if(!sv.counts) return '<p class="empty">결과는 설문 종료 후 공개됩니다.</p>';
+  let h = `<div class="results ${big?'big':''}">`;
+  if(sv.q1) h += `<div class="res-box"><div class="qt"><span class="qn">Q1</span>${esc(sv.q1)}</div>${pieChart(sv.options, sv.counts)}</div>`;
+  if(sv.q2) h += `<div class="res-box"><div class="qt"><span class="qn">Q2</span>${esc(sv.q2)}</div>${wordCloud(sv.texts, big)}</div>`;
+  return h + '</div>';
+}
+function pieChart(labels, counts){
+  const total = counts.reduce((a,b)=>a+b,0), R=100, cx=110, cy=110;
+  let svg = '<svg viewBox="0 0 220 220" class="pie" role="img" aria-label="객관식 응답 비율">';
+  if(!total){
+    svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#EEF0F3"/><text x="${cx}" y="${cy+5}" text-anchor="middle" class="pie-empty">응답 없음</text>`;
+  } else {
+    let ang = -Math.PI/2;
+    counts.forEach((c,i)=>{
+      if(!c) return;
+      const f = c/total, a2 = ang + f*2*Math.PI, col = COLORS[i%COLORS.length];
+      if(f > 0.9999) svg += `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${col}"/>`;
+      else {
+        const x1=cx+R*Math.cos(ang), y1=cy+R*Math.sin(ang), x2=cx+R*Math.cos(a2), y2=cy+R*Math.sin(a2);
+        svg += `<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${R},${R} 0 ${f>0.5?1:0} 1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${col}" stroke="#fff" stroke-width="1.5"/>`;
+      }
+      ang = a2;
+    });
+    ang = -Math.PI/2;
+    counts.forEach((c,i)=>{
+      if(!c) return;
+      const f = c/total, mid = ang + f*Math.PI; ang += f*2*Math.PI;
+      if(f < 0.05) return;
+      const lx = f>0.9999 ? cx : cx + R*0.64*Math.cos(mid), ly = f>0.9999 ? cy : cy + R*0.64*Math.sin(mid);
+      const fill = '#2E3140';
+      svg += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" class="pie-pct" style="fill:${fill}" text-anchor="middle" dominant-baseline="central">${Math.round(f*100)}%</text>`;
+    });
+  }
+  svg += '</svg>';
+  const legend = labels.map((l,i)=>{ const p = total ? Math.round(counts[i]/total*100) : 0;
+    return `<li><i style="background:${COLORS[i%COLORS.length]}"></i><span>${esc(l)}</span><b>${p}%</b><em>${counts[i]}명</em></li>`; }).join('');
+  return `<div class="pie-wrap">${svg}<ul class="legend">${legend}</ul></div>`;
+}
+const JOSA = ['에서는','으로','에서','이요','하고','처럼','은','는','이','가','을','를','에','의','도','와','과','로','요'];
+const STOP = new Set(['그리고','정말','너무','같은','있는','하는','것','더','잘','좀','수']);
+function tokenize(texts){
+  const cnt = {};
+  texts.forEach(t=>{
+    const seen = new Set();
+    String(t).replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).forEach(w=>{
+      if(!w) return;
+      for(const j of JOSA){ if(w.length - j.length >= 2 && w.endsWith(j)){ w = w.slice(0, -j.length); break; } }
+      if(STOP.has(w) || seen.has(w)) return;
+      seen.add(w); cnt[w] = (cnt[w]||0) + 1;
+    });
+  });
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1] || a[0].localeCompare(b[0])).slice(0,60);
+}
+function wordCloud(texts, big){
+  const words = tokenize(texts);
+  if(!words.length) return '<div class="cloud"><span class="muted" style="font-weight:500;font-size:.9rem">응답이 없습니다</span></div>';
+  const max = words[0][1], min = words[words.length-1][1];
+  const lo = big ? 1.2 : 0.9, hi = big ? 4.6 : 2.7;
+  const arr = [];
+  words.forEach((w,i)=>{ i%2 ? arr.push(w) : arr.unshift(w); });
+  const spans = arr.map(([w,c])=>{
+    const r = max===min ? 1 : (c-min)/(max-min), size = lo + (hi-lo)*r;
+    let hsh = 0; for(const ch of w) hsh = (hsh*31 + ch.charCodeAt(0)) >>> 0;
+    return `<span style="font-size:${size.toFixed(2)}rem;color:${CLOUD_COLORS[hsh%CLOUD_COLORS.length]};opacity:${(0.6+0.4*r).toFixed(2)}" title="${c}명">${esc(w)}</span>`;
+  }).join('');
+  const all = big ? '' : `<details class="all-ans"><summary>응답 전체 보기 (${texts.length})</summary><div>${texts.map(t=>`<span>${esc(t)}</span>`).join('')}</div></details>`;
+  return `<div class="cloud">${spans}</div>${all}`;
+}
+function openBig(){ ui.big = true; renderBig(); const el=document.getElementById('big'); try{ el.requestFullscreen && el.requestFullscreen().catch(()=>{}); }catch(e){} }
+function closeBig(){ ui.big = false; document.getElementById('big').classList.add('hidden'); try{ document.fullscreenElement && document.exitFullscreen(); }catch(e){} }
+function renderBig(){
+  const el = document.getElementById('big'); el.classList.remove('hidden');
+  const st = {idle:'준비', running:'진행 중', ended:'종료'}[S.survey.status];
+  el.innerHTML = `<div class="big-head"><h1>실시간 설문 결과 <small style="font-size:1rem;color:var(--sub);font-weight:500">응답 ${S.survey.total}명 · ${st}</small></h1><button class="btn ghost" onclick="closeBig()">닫기 ✕</button></div>${surveyResults(true)}`;
+}
+
+/* ----- 발표 모드 ----- */
+function presItems(){
+  const P = ui.pres, c = catOf(P.cat);
+  return S.agendas.filter(a=>a.catId===P.cat).map(a=>({id:a.id, title:a.title,
+    sub: (c.depts.length ? (ansOf(a.id).length ? '공식답변 '+ansOf(a.id).length+'건' : '공식답변 없음')+' · ' : '') + '답글 '+repliesOf(a.id).length}));
+}
+function isSel(id){ return ui.pres.sel[id] !== false; }
+function viewPresent(){
+  const P = ui.pres, c = catOf(P.cat), items = presItems();
+  const ek = 'pres_extra_'+P.cat;
+  if(ui.drafts[ek]===undefined) ui.drafts[ek] = store.get('dtf_'+ek, '');
+  if(ui.drafts.pres_end===undefined) ui.drafts.pres_end = store.get('dtf_pres_end', '');
+  let h = `<div class="page-h"><div><h2>발표 모드</h2><p>발표할 안건 항목을 선택하고, 슬라이드에 넣을 세부안건과 추가의견을 정리하세요. 발표 중에는 화면을 클릭하거나 ← → 키로 넘깁니다.</p></div></div>
+    <div class="pick">${CATEGORIES.map(x=>`<button class="pick-btn ${P.cat===x.id?'on':''}" style="--ac:${x.color};--acbg:${x.bg}" onclick="presCat('${x.id}')"><span class="pi">${icon(x.icon)}</span><span>${esc(x.name)}<small>${esc(x.depts.length?'담당: '+x.depts.join(', '):ETC_TEXT)}</small></span></button>`).join('')}</div>
+    <div class="setup" style="margin-top:16px">
+    <section class="panel pad" style="margin:0"><div class="sel-head"><b>세부안건 선택 (${items.filter(i=>isSel(i.id)).length}/${items.length})</b><span><button class="link" onclick="presAll(true)">전체 선택</button> · <button class="link" onclick="presAll(false)">전체 해제</button></span></div>`;
+  h += items.length ? `<div class="sel-list">${items.map(it=>`<label class="sel-item"><input type="checkbox" ${isSel(it.id)?'checked':''} onchange="presSel('${it.id}',this.checked)"><span>${esc(it.title)}</span><small>${esc(it.sub)}</small></label>`).join('')}</div>` : '<p class="empty">등록된 세부안건이 없습니다.</p>';
+  const added = addlIds();
+  h += `<div class="addl"><div class="sel-head" style="margin:16px 0 8px"><b>다른 항목에서 추가한 안건 (${added.length})</b><button class="btn ghost sm" onclick="ui.pres.addOpen=!ui.pres.addOpen;render()">${P.addOpen?'닫기':'+ 다른 항목의 안건 추가'}</button></div>`;
+  if(added.length) h += `<div class="sel-list">${added.map(id=>{ const a=S.agendas.find(x=>x.id===id), ac=catOf(a.catId); return `<div class="sel-item addl-item" style="--ac:${ac.color};--acbg:${ac.bg}"><span class="mini-tag">${esc(ac.name)}</span><span>${esc(a.title)}</span><button class="link del" onclick="presAdd('${id}',false)">빼기</button></div>`; }).join('')}</div>`;
+  else if(!P.addOpen) h += '<p class="hint" style="margin:0">다른 부서 항목의 세부안건도 이 발표에 넣을 수 있습니다.</p>';
+  if(P.addOpen){
+    const others = CATEGORIES.filter(x=>x.id!==P.cat).map(x=>({x, list:S.agendas.filter(a=>a.catId===x.id)})).filter(g=>g.list.length);
+    h += `<div class="addl-pop">${others.length ? others.map(g=>`<div class="addl-group" style="--ac:${g.x.color};--acbg:${g.x.bg}"><div class="addl-h"><span class="pi">${icon(g.x.icon)}</span>${esc(g.x.name)}</div>${g.list.map(a=>`<label class="sel-item"><input type="checkbox" ${added.includes(a.id)?'checked':''} onchange="presAdd('${a.id}',this.checked)"><span>${esc(a.title)}</span><small>${S.answers[a.id]?'공식답변 ✓ · ':''}답글 ${repliesOf(a.id).length}</small></label>`).join('')}</div>`).join('') : '<p class="empty">다른 항목에 등록된 세부안건이 없습니다.</p>'}</div>`;
+  }
+  h += `</div><label class="switch"><input type="checkbox" ${P.showReplies?'checked':''} onchange="ui.pres.showReplies=this.checked"><span>답글도 슬라이드에 표시</span></label></section>
+    <section class="panel pad" style="margin:0">
+      <label class="lbl" style="margin-top:0">발표자 추가의견 <span class="muted" style="font-weight:500">(선택)</span></label>
+      <textarea class="inp" rows="6" data-draft="${ek}" placeholder="발표 때 덧붙일 의견을 적으면 마지막 페이지 앞에 '추가의견' 슬라이드로 들어갑니다."></textarea>
+      <label class="lbl">마지막 페이지 문구 <span class="muted" style="font-weight:500">(선택)</span></label>
+      <input class="inp" data-draft="pres_end" maxlength="60" placeholder="감사합니다.">
+      <div class="hint">비워 두면 '감사합니다.'만 표시됩니다. 입력한 내용은 이 기기에 저장됩니다.</div>
+    </section></div>
+    <button class="btn lg navy" onclick="startPres()">발표 시작 ▶</button>`;
+  return h;
+}
+function presCat(c){ ui.pres.cat = c; ui.pres.addOpen = false; render(); }
+function addlIds(){ const P=ui.pres; return (P.addl[P.cat]||[]).filter(id=>S.agendas.some(a=>a.id===id && a.catId!==P.cat)); }
+function presAdd(id, on){ const P=ui.pres, list=(P.addl[P.cat]||[]).filter(x=>x!==id); if(on) list.push(id); P.addl[P.cat]=list; render(); }
+function presSel(id, on){ ui.pres.sel[id] = on; render(); }
+function presAll(on){ presItems().forEach(i=>ui.pres.sel[i.id]=on); render(); }
+function startPres(){
+  const P = ui.pres, ids = presItems().filter(i=>isSel(i.id)).map(i=>i.id).concat(addlIds());
+  const extra = (val('pres_extra_'+P.cat)||'').trim();
+  if(!ids.length && !extra){ toast('세부안건을 하나 이상 선택하거나 추가의견을 입력해 주세요.', true); return; }
+  P.slides = [{t:'cover'}, ...ids.map(id=>({t:'item', id}))];
+  if(extra) P.slides.push({t:'extra'});
+  P.slides.push({t:'end'});
+  P.idx = 0; P.on = true;
+  document.getElementById('pres').classList.remove('hidden');
+  toggleFull(true);
+  renderSlide();
+}
+function stopPres(){ ui.pres.on = false; document.getElementById('pres').classList.add('hidden'); try{ document.fullscreenElement && document.exitFullscreen(); }catch(e){} }
+function presGo(d){ const P=ui.pres; P.idx = Math.max(0, Math.min(P.slides.length-1, P.idx+d)); renderSlide(); document.getElementById('slide').scrollTop = 0; }
+function presZoom(d){ const P=ui.pres; P.zoom = Math.max(0.5, Math.min(2.2, Math.round((P.zoom+d)*10)/10)); renderSlide(); }
+function toggleFull(on){
+  const el = document.getElementById('pres');
+  try{ if(on===true || !document.fullscreenElement){ el.requestFullscreen && el.requestFullscreen().catch(()=>{}); } else document.exitFullscreen(); }catch(e){}
+}
+function fitSlide(){
+  const sl = document.getElementById('slide'), st = document.getElementById('stage');
+  const w = Math.min(st.clientWidth*0.95, st.clientHeight*0.95*16/9);
+  sl.style.width = w+'px'; sl.style.height = (w*9/16)+'px';
+  sl.style.fontSize = (w/56*ui.pres.zoom)+'px';
+}
+function renderSlide(){
+  const P = ui.pres, s = P.slides[P.idx], c = catOf(P.cat), sl = document.getElementById('slide');
+  sl.style.setProperty('--sac', c.color); sl.style.setProperty('--sacbg', c.bg);
+  sl.classList.toggle('warm', s.t==='cover' || s.t==='end');
+  const nItems = P.slides.filter(x=>x.t==='item').length;
+  let h = '';
+  if(s.t==='cover'){
+    h = `<div class="sl-cover"><div class="sl-cover-text"><span class="sl-badge">행복한 학교를 위한 대토론회 · 안건 ${catNo(c)}</span>
+      <div class="sl-cic">${icon(c.icon)}</div>
+      <h1>${esc(c.name)}</h1><p>${esc(deptText(c))}</p>
+      <div class="sl-count">세부안건 ${nItems}건${(()=>{ const n=P.slides.filter(x=>x.t==='item' && (S.agendas.find(a=>a.id===x.id)||{}).catId!==P.cat).length; return n?` (다른 항목 ${n}건 포함)`:''; })()}${P.slides.some(x=>x.t==='extra')?' · 추가의견':''}</div></div>
+      <div class="sl-cover-art">${HERO_SVG}</div></div>`;
+  } else if(s.t==='end'){
+    const txt = (ui.drafts.pres_end||'').trim() || '감사합니다.';
+    h = `<div class="sl-end">${END_SVG}<h1>${esc(txt)}</h1></div>`;
+  } else if(s.t==='extra'){
+    h = `<div class="sl-item"><span class="sl-tag">${icon(c.icon)} ${esc(c.name)} · 추가의견</span><h2>발표자 추가의견</h2><div class="sl-extra">${esc((ui.drafts['pres_extra_'+P.cat]||'').trim())}</div></div>`;
+  } else {
+    const a = S.agendas.find(v=>v.id===s.id);
+    if(!a) h = '<p>삭제된 세부안건입니다.</p>';
+    else {
+      const ans = ansOf(a.id), reps = repliesOf(a.id), ac = catOf(a.catId);
+      sl.style.setProperty('--sac', ac.color); sl.style.setProperty('--sacbg', ac.bg);
+      h = `<div class="sl-item"><span class="sl-tag">${icon(ac.icon)} ${esc(ac.name)}${ac.id!==c.id?' · 추가 안건':''} · ${pad2(P.idx)} / ${pad2(nItems)}</span><h2>${esc(a.title)}</h2>
+        ${a.content ? `<div class="sl-q">${nl(a.content)}</div>` : ''}
+        ${ac.depts.length ? (ans.length ? ans.map(x=>`<div class="sl-ans"><div class="sl-ans-h">공식답변 · ${esc(x.dept)}</div><div>${nl(x.content)}</div></div>`).join('') : '<div class="sl-ans none">공식답변 준비 중입니다.</div>') : ''}
+        ${P.showReplies && reps.length ? `<div class="sl-reps"><div class="sl-reps-h">선생님 의견 ${reps.length}</div><div class="sl-rep-grid">${reps.map(r=>`<div class="sl-rep"><b>${esc(r.nickname)}</b>${nl(r.content)}</div>`).join('')}</div></div>` : ''}
+      </div>`;
+    }
+  }
+  sl.innerHTML = h;
+  document.getElementById('presPage').textContent = `${P.idx+1} / ${P.slides.length}`;
+  document.getElementById('presZoomV').textContent = Math.round(P.zoom*100)+'%';
+  fitSlide();
+}
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('dlg').classList.contains('hidden')===false) return;
+  if(ui.pres.on){
+    if(['ArrowRight','PageDown',' '].includes(e.key)){ e.preventDefault(); presGo(1); }
+    else if(['ArrowLeft','PageUp'].includes(e.key)){ e.preventDefault(); presGo(-1); }
+    else if(e.key==='+' || e.key==='='){ presZoom(0.1); }
+    else if(e.key==='-'){ presZoom(-0.1); }
+    else if(e.key==='Escape' && !document.fullscreenElement){ stopPres(); }
+  } else if(ui.big && e.key==='Escape' && !document.fullscreenElement){ closeBig(); }
+});
+window.addEventListener('resize', ()=>{ if(ui.pres.on) fitSlide(); });
+document.addEventListener('fullscreenchange', ()=>{ if(ui.pres.on) setTimeout(fitSlide, 60); });
+
+/* ----- 담당자 ----- */
+function viewAdmin(){
+  if(!ui.pw) return `<section class="panel pad narrow"><div class="login-art">${HERO_SVG}</div><h2>담당자 로그인</h2><p class="muted sm" style="margin:4px 0 12px">사이트 담당자 비밀번호를 입력하세요.${API_URL ? '' : ' (미리보기: 1234)'}</p>
+    <input type="password" class="inp" data-draft="pw" onkeydown="if(event.key==='Enter')login()"><button class="btn" onclick="login()">로그인</button></section>`;
+  const tabs = [['agendas','세부안건'],['hl','우수사항'],['survey','실시간 설문'],['ops','토론 운영'],['dash','총평']];
+  const body = {agendas:adAgendas, hl:adHl, survey:adSurvey, ops:adOps, dash:adDash}[ui.adTab]();
+  const verWarn = (API_URL && S.serverVersion !== EXPECTED_SERVER) ? `<div class="notice" style="background:#FFF1EE;border-color:#F4C9BE;color:#9A3B26"><span><b>서버(Apps Script)가 최신 버전이 아닙니다.</b> 현재 서버: ${esc(S.serverVersion||'이전 버전')} · 필요한 버전: ${EXPECTED_SERVER}<br>Apps Script에 최신 Code.gs를 붙여넣고 <b>배포 → 배포 관리 → 연필(수정) → 버전: 새 버전 → 배포</b>를 눌러 주세요. 이 상태에서는 반응 수 수정·AI 총평 등 일부 기능이 동작하지 않습니다.</span></div>` : '';
+  return verWarn + `<div class="subtabs">${tabs.map(([k,t])=>`<button class="subtab ${ui.adTab===k?'on':''}" onclick="ui.adTab='${k}';render()">${t}</button>`).join('')}<button class="link" onclick="logout()">로그아웃</button></div>${body}`;
+}
+async function login(){
+  const pw = val('pw');
+  if(!pw){ toast('비밀번호를 입력해 주세요.', true); return; }
+  try{ const d = await api('login', {pw}); ui.pw = pw; ui.drafts.pw = ''; setData(await api('getAll'), true); toast('담당자로 로그인했습니다.'); }
+  catch(e){ toast(e.message, true); }
+}
+function logout(){ ui.pw = null; ui.svInit = false; Object.keys(ui.drafts).filter(k=>k.startsWith('sm_')).forEach(k=>delete ui.drafts[k]); poll(); render(); }
+
+function adAgendas(){
+  const c = catOf(ui.adCat), ags = S.agendas.filter(a=>a.catId===c.id);
+  let h = `<div class="pick small" style="margin-top:0">${CATEGORIES.map(x=>`<button class="pick-btn ${ui.adCat===x.id?'on':''}" style="--ac:${x.color};--acbg:${x.bg}" onclick="adCat('${x.id}')"><span class="pi">${icon(x.icon)}</span><span>${esc(x.name)}</span></button>`).join('')}</div>`;
+  h += `<section class="panel pad"><h3>${esc(c.name)} <small>세부안건 ${ags.length}건</small></h3>${ags.length ? `<table class="tbl"><thead><tr><th>순서</th><th>세부안건</th><th>공식답변</th><th>반응 수 <span class="muted" style="font-weight:500">(수정 가능)</span></th><th></th></tr></thead><tbody>${ags.map(a=>`<tr><td class="num">${a.order}</td><td><b>${esc(a.title)}</b><div class="muted sm">${esc(cut(a.content,70))}</div></td><td class="nowrap">${ansCell(a, c)}</td><td class="nowrap"><div class="rc-edit">${REACTIONS.map(x=>`<label title="${x.t}">${x.e}<input type="number" min="0" class="rc-inp" data-draft="rc_${a.id}_${x.k}" value="${rc(a.id)[x.k]||0}"></label>`).join('')}<button class="btn ghost sm" onclick="saveRc('${a.id}')">저장</button></div></td><td class="nowrap"><button class="link" onclick="editAg('${a.id}')">수정</button> · <button class="link del" onclick="delAg('${a.id}')">삭제</button></td></tr>`).join('')}</tbody></table>` : '<p class="empty">등록된 세부안건이 없습니다.</p>'}</section>`;
+  h += `<section class="panel pad"><h3>${ui.editAg ? '세부안건 수정' : '세부안건 추가'} <small>${esc(c.name)}</small></h3>
+    <label class="lbl" style="margin-top:0">제목</label><input class="inp" data-draft="ag_title" maxlength="200" placeholder="예) 급식 메뉴 선호도 조사 정례화">
+    <label class="lbl">안건 설명 (선택)</label><textarea class="inp" rows="4" data-draft="ag_content" placeholder="안건의 배경이나 제안 내용을 적어 주세요"></textarea>
+    <label class="lbl">순서 (작은 숫자가 먼저 표시)</label><input class="inp short" type="number" data-draft="ag_order" placeholder="${ags.length+1}">
+    <div class="row-end">${ui.editAg ? '<button class="btn ghost" onclick="cancelAg()">취소</button>' : ''}<button class="btn" onclick="saveAg()">저장</button></div></section>`;
+  return h;
+}
+async function saveRc(id){
+  const p = {agendaId:id};
+  for(const x of REACTIONS){
+    const v = val(`rc_${id}_${x.k}`).trim();
+    if(v==='' || isNaN(Number(v)) || Number(v) < 0){ toast(`${x.t} 수를 0 이상의 숫자로 입력해 주세요.`, true); return; }
+    p[x.k] = Math.round(Number(v));
+  }
+  if(await call('setReactionCounts', p, '반응 수를 수정했습니다.')){ REACTIONS.forEach(x=>delete ui.drafts[`rc_${id}_${x.k}`]); render(); }
+}
+function clearAg(){ ui.editAg = null; ['ag_title','ag_content','ag_order'].forEach(k=>delete ui.drafts[k]); }
+function adCat(id){ ui.adCat = id; clearAg(); render(); }
+function editAg(id){ const a = S.agendas.find(x=>x.id===id); ui.editAg = id; ui.drafts.ag_title=a.title; ui.drafts.ag_content=a.content; ui.drafts.ag_order=String(a.order); render(); window.scrollTo(0, document.body.scrollHeight); }
+function cancelAg(){ clearAg(); render(); }
+async function saveAg(){
+  const title = val('ag_title').trim();
+  if(!title){ toast('제목을 입력해 주세요.', true); return; }
+  const n = S.agendas.filter(a=>a.catId===ui.adCat).length;
+  const order = val('ag_order').trim() || (ui.editAg ? 0 : n+1);
+  if(await call('saveAgenda', {id:ui.editAg||'', catId:ui.adCat, title, content:val('ag_content'), order}, '세부안건을 저장했습니다.')){ clearAg(); render(); }
+}
+async function delAg(id){ if(await ask('이 세부안건과 공식답변·답글·반응을 모두 삭제할까요?')) call('deleteAgenda', {id}, '삭제했습니다.'); }
+
+function adHl(){
+  const list = S.highlights;
+  let h = `<section class="panel pad"><h3>2026학년도 우수사항 <small>${list.length}건 · 토론 화면 맨 위에 확인용으로 표시됩니다</small></h3>
+    ${list.length ? `<table class="tbl"><thead><tr><th>순서</th><th>우수사항</th><th>관련 부서</th><th></th></tr></thead><tbody>${list.map(x=>`<tr><td class="num">${x.order}</td><td><b>${esc(x.title)}</b><div class="muted sm">${esc(cut(x.content,70))}</div></td><td>${esc(x.dept)}</td><td class="nowrap"><button class="link" onclick="editHl('${x.id}')">수정</button> · <button class="link del" onclick="delHl('${x.id}')">삭제</button></td></tr>`).join('')}</tbody></table>` : '<p class="empty">등록된 우수사항이 없습니다.</p>'}</section>`;
+  h += `<section class="panel pad"><h3>${ui.editHl ? '우수사항 수정' : '우수사항 추가'}</h3>
+    <label class="lbl" style="margin-top:0">제목</label><input class="inp" data-draft="hl_title" maxlength="200" placeholder="예) 학생 주도 축제 운영">
+    <label class="lbl">내용 (선택)</label><textarea class="inp" rows="3" data-draft="hl_content"></textarea>
+    <label class="lbl">관련 부서·대상 (선택)</label><input class="inp" data-draft="hl_dept" maxlength="50" placeholder="예) 학생부">
+    <label class="lbl">순서</label><input class="inp short" type="number" data-draft="hl_order" placeholder="${list.length+1}">
+    <div class="row-end">${ui.editHl ? '<button class="btn ghost" onclick="cancelHl()">취소</button>' : ''}<button class="btn" onclick="saveHl()">저장</button></div></section>`;
+  return h;
+}
+function clearHl(){ ui.editHl = null; ['hl_title','hl_content','hl_dept','hl_order'].forEach(k=>delete ui.drafts[k]); }
+function editHl(id){ const x = S.highlights.find(v=>v.id===id); ui.editHl=id; ui.drafts.hl_title=x.title; ui.drafts.hl_content=x.content; ui.drafts.hl_dept=x.dept; ui.drafts.hl_order=String(x.order); render(); window.scrollTo(0, document.body.scrollHeight); }
+function cancelHl(){ clearHl(); render(); }
+async function saveHl(){
+  const title = val('hl_title').trim();
+  if(!title){ toast('제목을 입력해 주세요.', true); return; }
+  const order = val('hl_order').trim() || (ui.editHl ? 0 : S.highlights.length+1);
+  if(await call('saveHighlight', {id:ui.editHl||'', title, content:val('hl_content'), dept:val('hl_dept'), order}, '우수사항을 저장했습니다.')){ clearHl(); render(); }
+}
+async function delHl(id){ if(await ask('이 우수사항을 삭제할까요?')) call('deleteHighlight', {id}, '삭제했습니다.'); }
+
+function adSurvey(){
+  const sv = S.survey;
+  if(!ui.svInit){ ui.drafts.sv_q1 = sv.q1; for(let i=0;i<5;i++) ui.drafts['sv_o'+i] = sv.options[i]||''; ui.drafts.sv_q2 = sv.q2; ui.svInit = true; }
+  const segs = [['idle','설문 준비','참여자 화면에 설문이 보이지 않습니다.'],['running','설문 시작','참여자에게 설문이 열리고 응답을 받습니다. 결과는 아직 비공개입니다.'],['ended','설문 종료','응답을 마감하고 결과를 모두에게 공개합니다.']];
+  return `<section class="panel pad"><h3>설문 진행 <small>현재 응답 ${sv.total}명</small></h3>
+    <div class="seg">${segs.map(([k,t,d])=>`<button class="seg-btn ${sv.status===k?'on':''}" onclick="setSurvey('${k}')"><b>${t}</b><small>${d}</small></button>`).join('')}</div></section>
+    <section class="panel pad"><div class="row-between" style="margin-bottom:12px"><h3 style="margin:0">실시간 결과 <small>담당자에게만 보입니다${sv.status==='ended'?' (현재 전체 공개됨)':''}</small></h3><button class="btn ghost sm" onclick="openBig()">크게 보기</button></div>${surveyResults(false)}</section>
+    <section class="panel pad"><h3>설문 문항</h3>
+    <div class="q" style="margin-top:0"><div class="qt"><span class="qn">Q1</span>객관식 · 원형 그래프</div>
+      <input class="inp" data-draft="sv_q1" maxlength="200" placeholder="예) 올해 우리 학교에서 가장 만족스러웠던 영역은?">
+      <label class="lbl">보기 (2~5개)</label>
+      ${[0,1,2,3,4].map(i=>`<input class="inp" style="margin-bottom:6px" data-draft="sv_o${i}" maxlength="60" placeholder="보기 ${i+1}">`).join('')}</div>
+    <div class="q"><div class="qt"><span class="qn">Q2</span>주관식 · 워드 클라우드</div>
+      <input class="inp" data-draft="sv_q2" maxlength="200" placeholder="예) 행복한 학교를 한 단어로 표현한다면?"></div>
+    <div class="row-end"><button class="btn danger" onclick="resetSurvey()">응답 초기화</button><button class="btn" onclick="saveSurvey()">문항 저장</button></div></section>`;
+}
+async function setSurvey(k){
+  const sv = S.survey; if(sv.status===k) return;
+  const msg = {idle:'설문을 준비 상태로 돌릴까요? 참여자 화면에서 설문이 사라집니다.', running:'설문을 시작할까요? 참여자 화면에 설문이 나타납니다.', ended:'설문을 종료할까요? 응답이 마감되고 결과가 모두에게 공개됩니다.'}[k];
+  if(await ask(msg)) call('setSurveyStatus', {surveyStatus:k}, {idle:'설문을 준비 상태로 바꿨습니다.', running:'설문을 시작했습니다.', ended:'설문을 종료하고 결과를 공개했습니다.'}[k]);
+}
+async function saveSurvey(){
+  const options = [0,1,2,3,4].map(i=>val('sv_o'+i).trim()).filter(Boolean);
+  const q1 = val('sv_q1').trim();
+  if(q1 && options.length < 2){ toast('객관식 보기를 2개 이상 입력해 주세요.', true); return; }
+  if(await call('saveSurvey', {q1, options, q2:val('sv_q2').trim()}, '설문 문항을 저장했습니다.')){ ui.svInit = false; render(); }
+}
+async function resetSurvey(){ if(await ask('설문 응답을 모두 삭제할까요? 되돌릴 수 없습니다.')) call('resetSurvey', {}, '응답을 초기화했습니다.'); }
+
+function adOps(){
+  const opts = [['ready','준비 중','답글·반응은 닫혀 있습니다. 부서 공식답변은 미리 작성할 수 있습니다.'],['open','토론 열기','답글과 이모티콘 반응을 받습니다.'],['closed','토론 마감','모든 입력을 잠그고 보기만 가능합니다.']];
+  const reps = S.replies.slice().reverse();
+  return `<section class="panel pad"><h3>토론 상태</h3><div class="seg">${opts.map(([k,t,d])=>`<button class="seg-btn ${S.status===k?'on':''}" onclick="setStatus('${k}')"><b>${t}</b><small>${d}</small></button>`).join('')}</div></section>
+    <section class="panel pad"><h3>답글 관리 <small>${reps.length}건 · 최근 순 · 부적절한 답글을 삭제할 수 있습니다</small></h3>
+      ${reps.length ? `<table class="tbl"><thead><tr><th>세부안건</th><th>닉네임</th><th>내용</th><th></th></tr></thead><tbody>${reps.map(r=>{ const a=S.agendas.find(x=>x.id===r.agendaId); return `<tr><td class="sm">${esc(cut(a?a.title:'(삭제됨)',22))}</td><td class="nowrap">${esc(r.nickname)}</td><td>${nl(r.content)}<div class="muted sm">${fmt(r.createdAt)}</div></td><td><button class="link del" onclick="adDelReply('${r.id}')">삭제</button></td></tr>`; }).join('')}</tbody></table>` : '<p class="empty">답글이 없습니다.</p>'}</section>
+    <section class="panel pad"><h3>담당자 비밀번호 변경</h3><input type="password" class="inp" data-draft="np1" placeholder="새 비밀번호 (4자 이상)" style="margin-bottom:6px"><input type="password" class="inp" data-draft="np2" placeholder="새 비밀번호 확인"><div class="row-end"><button class="btn" onclick="changePw()">변경</button></div></section>`;
+}
+async function setStatus(k){
+  const msg = {ready:'토론을 준비 중 상태로 바꿀까요?', open:'토론을 열까요? 선생님들이 답글과 반응을 남길 수 있게 됩니다.', closed:'토론을 마감할까요? 모든 입력이 잠깁니다.'}[k];
+  if(S.status!==k && await ask(msg)) call('setStatus', {status:k}, '토론 상태를 변경했습니다.');
+}
+async function adDelReply(id){ if(await ask('이 답글을 삭제할까요?')) call('deleteReply', {id}, '삭제했습니다.'); }
+async function changePw(){
+  const a = val('np1'), b = val('np2');
+  if(a.length < 4){ toast('4자 이상으로 정해 주세요.', true); return; }
+  if(a !== b){ toast('두 비밀번호가 일치하지 않습니다.', true); return; }
+  if(await call('changePw', {newPw:a}, '비밀번호를 변경했습니다.')){ ui.pw = a; ui.drafts.np1 = ui.drafts.np2 = ''; render(); }
+}
+
+function dashData(){
+  const ags = S.agendas;
+  const tot = {like:0, love:0, more:0}; ags.forEach(a=>{ const r=rc(a.id); tot.like+=r.like; tot.love+=r.love; tot.more+=r.more; });
+  const needAns = ags.filter(a=>catOf(a.catId) && catOf(a.catId).depts.length);
+  const scored = ags.map(a=>{ const r=rc(a.id), n=repliesOf(a.id).length; return {a, n, r, score:n+r.like+r.love+r.more}; });
+  return {ags, tot, needAns, answered:needAns.filter(a=>S.answers[a.id]).length, scored,
+    top:scored.filter(x=>x.score>0).sort((x,y)=>y.score-x.score).slice(0,5),
+    more:scored.filter(x=>x.r.more>0).sort((x,y)=>y.r.more-x.r.more).slice(0,5),
+    unans:needAns.filter(a=>!S.answers[a.id])};
+}
+function adDash(){
+  const D = dashData();
+  D.ags.forEach(a=>{ if(ui.drafts['sm_'+a.id]===undefined) ui.drafts['sm_'+a.id] = S.summaries[a.id]||''; });
+  if(ui.drafts.sm_ALL===undefined) ui.drafts.sm_ALL = S.summaries.ALL||'';
+  const label = x=>`<span style="color:${catOf(x.a.catId).color};font-weight:700">${catNo(catOf(x.a.catId))}</span> ${esc(x.a.title)}`;
+  const aiNote = API_URL ? (S.aiReady ? 'Gemini AI가 세부안건별 총평과 전체 총평을 작성합니다. 생성 후 직접 고칠 수 있습니다.' : 'AI 키가 설정되지 않았습니다. 아래 AI 설정에 Gemini API 키를 저장해 주세요.') : '미리보기에서는 예시 총평이 만들어집니다. 실제 운영에서는 Gemini AI가 작성합니다.';
+
+  let h = `<div class="ai-bar"><div class="ai-l"><span class="ai-ic">${icon('spark')}</span><div><b>AI 총평</b><p>${aiNote}</p></div></div><div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" ${ui.aiBusy?'disabled':''} onclick="runAi()">${ui.aiBusy ? '<span class="spinner"></span> 작성 중… (최대 1분)' : 'AI 총평 생성'}</button>
+      <button class="btn ghost" onclick="exportExcel()">엑셀로 저장</button></div></div>
+    <div class="stats">
+      <div class="stat"><span>세부안건</span><b>${D.ags.length}</b></div>
+      <div class="stat"><span>공식답변 완료</span><b>${D.answered}<small> / ${D.needAns.length}</small></b></div>
+      <div class="stat"><span>답글</span><b>${S.replies.length}</b></div>
+      <div class="stat"><span>반응</span><b>${D.tot.like+D.tot.love+D.tot.more}</b><small>👍 ${D.tot.like} · ❤️ ${D.tot.love} · 🙋 ${D.tot.more}</small></div>
+      <div class="stat"><span>설문 응답</span><b>${S.survey.total}</b></div>
+    </div>
+    <section class="panel pad sum-box"><h3>전체 총평</h3><textarea rows="6" data-draft="sm_ALL" placeholder="AI 총평 생성을 누르거나 직접 입력하세요"></textarea><div class="row-end"><button class="btn sm" onclick="saveSum('ALL')">저장</button></div></section>`;
+  if(S.survey.q1 || S.survey.q2) h += `<section class="panel pad"><h3>실시간 설문 결과 <small>응답 ${S.survey.total}명</small></h3>${surveyResults(false)}</section>`;
+  h += `<div class="two">
+    <section class="panel pad"><h3>관심이 높은 안건</h3>${D.top.length ? `<ol class="rank">${D.top.map(x=>`<li><span>${label(x)}</span><small>답글 ${x.n} · 반응 ${x.r.like+x.r.love+x.r.more}</small></li>`).join('')}</ol>` : '<p class="empty">아직 참여가 없습니다.</p>'}</section>
+    <section class="panel pad"><h3>추가 논의가 필요한 안건 <small>🙋 기준</small></h3>${D.more.length ? `<ol class="rank">${D.more.map(x=>`<li><span>${label(x)}</span><small>🙋 ${x.r.more}</small></li>`).join('')}</ol>` : '<p class="empty">없습니다.</p>'}</section>
+  </div>`;
+  if(D.unans.length) h += `<section class="panel pad"><h3>공식답변이 없는 안건 <small>${D.unans.length}건</small></h3><ul style="margin:0;padding-left:18px;font-size:.9rem">${D.unans.map(a=>`<li>${esc(a.title)} <span class="muted sm">· ${catOf(a.catId).depts.join('·')}</span></li>`).join('')}</ul></section>`;
+  h += '<section class="panel pad"><h3>세부안건별 총평</h3>';
+  CATEGORIES.forEach(c=>{
+    const list = D.ags.filter(a=>a.catId===c.id);
+    if(!list.length) return;
+    h += `<div class="cat-h" style="--ac:${c.color};--acbg:${c.bg}"><span class="pi">${icon(c.icon)}</span>${esc(c.name)}</div><table class="tbl"><thead><tr><th>세부안건</th><th class="num">답글</th><th class="num">👍</th><th class="num">❤️</th><th class="num">🙋</th><th>공식답변</th><th style="width:38%">총평</th></tr></thead><tbody>${list.map(a=>{ const r=rc(a.id); return `<tr><td><b>${esc(a.title)}</b></td><td class="num">${repliesOf(a.id).length}</td><td class="num">${r.like}</td><td class="num">${r.love}</td><td class="num">${r.more}</td><td class="nowrap">${ansCell(a, c)}</td><td class="sum-box"><textarea rows="3" data-draft="sm_${a.id}" placeholder="총평"></textarea><div class="row-end" style="margin-top:4px"><button class="btn ghost sm" onclick="saveSum('${a.id}')">저장</button></div></td></tr>`; }).join('')}</tbody></table>`;
+  });
+  h += '</section>';
+  h += `<section class="panel pad"><h3>AI 설정</h3><p class="muted sm" style="margin:-6px 0 10px">Google AI Studio(aistudio.google.com)에서 무료로 받은 Gemini API 키를 저장하세요. 키는 서버(Apps Script)에만 보관되고 화면에는 다시 표시되지 않습니다. ${S.aiReady ? '<b style="color:var(--ok)">현재 키가 저장되어 있습니다.</b>' : ''}</p>
+    <div style="display:flex;gap:8px"><input type="password" class="inp" data-draft="aikey" placeholder="Gemini API 키"><button class="btn" onclick="saveAiKey()">저장</button></div></section>`;
+  return h;
+}
+function saveSum(id){ call('saveSummary', {agendaId:id, text:val('sm_'+id)}, '총평을 저장했습니다.'); }
+async function saveAiKey(){ const k = val('aikey').trim(); if(!k){ toast('키를 입력해 주세요.', true); return; } if(await call('setAiKey', {key:k}, 'AI 키를 저장했습니다.')){ ui.drafts.aikey=''; render(); } }
+async function runAi(){
+  const has = Object.values(S.summaries||{}).some(v=>String(v).trim());
+  if(has && !(await ask('이미 작성된 총평을 AI가 새로 작성한 내용으로 바꿉니다. 계속할까요?'))) return;
+  ui.aiBusy = true; render();
+  const ok = await call('aiSummary', {}, 'AI 총평을 작성했습니다. 필요하면 고친 뒤 저장하세요.');
+  ui.aiBusy = false;
+  if(ok) Object.keys(ui.drafts).filter(k=>k.startsWith('sm_')).forEach(k=>delete ui.drafts[k]);
+  render();
+}
+
+/* ----- 엑셀 저장 ----- */
+function exportExcel(){
+  if(typeof XLSX === 'undefined'){ toast('엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.', true); return; }
+  const D = dashData(), now = new Date();
+  const stamp = `${now.getFullYear()}-${pad2(now.getMonth()+1)}-${pad2(now.getDate())} ${pad2(now.getHours())}:${pad2(now.getMinutes())}`;
+  const sum = k => (ui.drafts['sm_'+k]!==undefined ? ui.drafts['sm_'+k] : (S.summaries[k]||''));
+  const wb = XLSX.utils.book_new();
+  const add = (name, rows, widths)=>{ const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = widths.map(w=>({wch:w})); XLSX.utils.book_append_sheet(wb, ws, name); };
+
+  const r1 = [['행복한 학교를 위한 대토론회 안건 토론 — 총평'], ['작성 시각', stamp], [],
+    ['요약'], ['세부안건', D.ags.length], ['공식답변 완료', `${D.answered} / ${D.needAns.length}`], ['답글', S.replies.length],
+    ['반응(공감/좋아요/더 논의해요)', `${D.tot.like} / ${D.tot.love} / ${D.tot.more}`], ['설문 응답', S.survey.total], [],
+    ['전체 총평'], [sum('ALL')], [],
+    ['안건 항목','세부안건','공식답변 부서','답글','공감','좋아요','더 논의해요','총평']];
+  CATEGORIES.forEach(c=> D.ags.filter(a=>a.catId===c.id).forEach(a=>{ const r=rc(a.id);
+    r1.push([c.name, a.title, ansOf(a.id).length ? ansOf(a.id).map(x=>x.dept).join(', ') : (c.depts.length ? '미답변' : '-'), repliesOf(a.id).length, r.like, r.love, r.more, sum(a.id)]); }));
+  add('총평', r1, [26,36,14,7,7,7,10,70]);
+
+  const r2 = [['안건 항목','담당부서','세부안건','안건 설명','답변 부서','공식답변']];
+  CATEGORIES.forEach(c=> D.ags.filter(a=>a.catId===c.id).forEach(a=>{ const ans=ansOf(a.id);
+    if(ans.length) ans.forEach(x=>r2.push([c.name, c.depts.join('·')||ETC_TEXT, a.title, a.content, x.dept, x.content]));
+    else r2.push([c.name, c.depts.join('·')||ETC_TEXT, a.title, a.content, '', '']); }));
+  add('세부안건·공식답변', r2, [26,22,36,50,12,70]);
+
+  const r3 = [['안건 항목','세부안건','닉네임','답글','작성 시각']];
+  CATEGORIES.forEach(c=> D.ags.filter(a=>a.catId===c.id).forEach(a=> repliesOf(a.id).forEach(r=>{
+    r3.push([c.name, a.title, r.nickname, r.content, fmt(r.createdAt)]); })));
+  add('답글', r3, [26,36,16,70,14]);
+
+  const sv = S.survey, r4 = [];
+  if(sv.counts){
+    const total = sv.counts.reduce((a,b)=>a+b,0);
+    if(sv.q1){ r4.push(['Q1 (객관식)', sv.q1], ['보기','응답 수','비율']); sv.options.forEach((o,i)=>r4.push([o, sv.counts[i], total ? Math.round(sv.counts[i]/total*1000)/10+'%' : '0%'])); r4.push([]); }
+    if(sv.q2){ r4.push(['Q2 (주관식)', sv.q2], ['단어','언급 수']); tokenize(sv.texts).forEach(([w,c])=>r4.push([w,c])); r4.push([], ['전체 응답']); sv.texts.forEach(t=>r4.push([t])); }
+  } else r4.push(['설문 결과가 없습니다.']);
+  add('설문결과', r4, [36,12,10]);
+
+  const r5 = [['순서','우수사항','내용','관련 부서']];
+  S.highlights.forEach((x,i)=>r5.push([i+1, x.title, x.content, x.dept]));
+  add('우수사항', r5, [6,36,60,14]);
+
+  try{
+    XLSX.writeFile(wb, `대토론회_총평_${stamp.slice(0,10).replace(/-/g,'')}.xlsx`);
+    toast('엑셀 파일을 저장했습니다.');
+  }catch(e){ toast('이 화면에서는 파일 저장이 막혀 있습니다. 실제 사이트에서 이용해 주세요.', true); }
+}
+
+/* ===================== 입력 기억 ===================== */
+document.getElementById('main').addEventListener('input', e=>{
+  const k = e.target.dataset && e.target.dataset.draft;
+  if(!k) return;
+  ui.drafts[k] = e.target.value;
+  if(k==='nick') store.set('dtf_nick', e.target.value);
+  if(k.startsWith('pres_')) store.set('dtf_'+k, e.target.value);
+});
+document.getElementById('main').addEventListener('change', e=>{
+  const k = e.target.dataset && e.target.dataset.draft;
+  if(k) ui.drafts[k] = e.target.value;
+});
+document.addEventListener('focusout', ()=>{ setTimeout(()=>{ if(pending && !isTyping()) render(); }, 250); });
+
+/* ===================== 미리보기(데모) 서버 ===================== */
+const MOCK = (()=>{
+  const ago = m=> new Date(Date.now()-m*60000).toISOString();
+  const db = {
+    status:'open', pw:'1234', surveyStatus:'idle', aiKey:false,
+    q1:'올해 우리 학교에서 가장 만족스러웠던 영역은?', opts:['학교환경/급식','민주적 학교문화','교육과정·진로','생활지도·학생행사','수업·평가 지원'],
+    q2:'행복한 학교를 한 단어로 표현한다면?',
+    agendas:[
+      {id:'g1',catId:'c1',title:'급식 메뉴 선호도 조사 정례화',content:'학기마다 학생·교사 대상 급식 선호도 조사를 정기적으로 실시하면 좋겠습니다.',order:1,createdAt:ago(900)},
+      {id:'g2',catId:'c1',title:'교무실 냉난방기 점검 요청',content:'2층 교무실 냉난방기 소음이 크고 온도 조절이 잘 되지 않습니다.',order:2,createdAt:ago(880)},
+      {id:'g3',catId:'c2',title:'학사일정 확정 시기 앞당기기',content:'다음 학년도 학사일정을 2월 초까지 확정해 공유해 주세요.',order:1,createdAt:ago(870)},
+      {id:'g4',catId:'c3',title:'학년 협의회 정기 시간 확보',content:'',order:1,createdAt:ago(860)},
+      {id:'g5',catId:'c4',title:'창체 동아리 운영 방식 개선',content:'동아리 신청을 온라인으로 받고 선택 폭을 넓히면 좋겠습니다.',order:1,createdAt:ago(850)},
+      {id:'g6',catId:'c5',title:'학생 축제 일정 조정',content:'축제가 정기시험 직후에 몰려 준비 기간이 부족합니다.',order:1,createdAt:ago(840)},
+      {id:'g7',catId:'c6',title:'수행평가 일정 학년 공유',content:'과목별 수행평가 일정을 한눈에 볼 수 있는 공유 달력이 필요합니다.',order:1,createdAt:ago(830)},
+      {id:'g8',catId:'c7',title:'교직원 휴게 공간 마련',content:'',order:1,createdAt:ago(820)}
+    ],
+    answers:{
+      g1:[{dept:'급식실',content:'좋은 제안 감사합니다. 학기 초·학기 말 연 4회 온라인 선호도 조사를 실시하고 결과를 식단에 반영하겠습니다.',updatedAt:ago(300)}],
+      g3:[{dept:'교무부',content:'내년부터 1월 말 초안, 2월 둘째 주 확정을 목표로 진행하겠습니다.',updatedAt:ago(280)}],
+      g4:[{dept:'1학년부',content:'매주 수요일 7교시를 학년 협의 시간으로 고정하겠습니다.',updatedAt:ago(270)},{dept:'3학년부',content:'3학년은 진학 상담 일정을 고려해 격주 목요일로 운영하겠습니다.',updatedAt:ago(265)}],
+      g6:[{dept:'학생부',content:'연구부와 협의하여 시험 종료 후 최소 2주 뒤로 축제 일정을 조정하겠습니다.',updatedAt:ago(260)}],
+      g7:[{dept:'연구부',content:'구글 캘린더로 학년별 수행평가 공유 달력을 만들어 3월부터 운영하겠습니다.',updatedAt:ago(250)}]
+    },
+    replies:[
+      {id:'r1',agendaId:'g1',nickname:'조용한 소나무',content:'조사 결과도 함께 공개해 주시면 좋겠습니다.',deviceId:'x1',createdAt:ago(120)},
+      {id:'r2',agendaId:'g1',nickname:'차분한 고래',content:'학생 자치회와 같이 진행하면 참여율이 높을 것 같습니다.',deviceId:'x2',createdAt:ago(90)},
+      {id:'r3',agendaId:'g6',nickname:'단단한 은행나무',content:'일정 조정에 찬성합니다. 동아리 발표 준비 기간도 함께 고려해 주세요.',deviceId:'x3',createdAt:ago(60)},
+      {id:'r4',agendaId:'g7',nickname:'3학년 담임',content:'학생들에게도 공유되면 좋겠습니다.',deviceId:'x4',createdAt:ago(40)},
+      {id:'r5',agendaId:'g8',nickname:'다정한 부엉이',content:'유휴 교실 한 곳을 휴게실로 전환하는 방안을 검토해 주세요.',deviceId:'x5',createdAt:ago(20)}
+    ],
+    reactions:[], adj:{}, survey:[],
+    highlights:[
+      {id:'h1',title:'학생 주도 축제 운영',content:'학생회가 기획부터 운영까지 맡아 참여 만족도 92%를 기록했습니다.',dept:'학생부',order:1},
+      {id:'h2',title:'진로 탐색 주간 운영',content:'지역 대학·기관과 연계한 진로 체험 프로그램 30여 개를 운영했습니다.',dept:'진로부',order:2},
+      {id:'h3',title:'친환경 급식의 날 정착',content:'',dept:'급식실',order:3}
+    ],
+    summaries:{}
+  };
+  [['g1','like',9],['g1','love',4],['g1','more',2],['g2','like',6],['g2','more',5],['g3','like',7],['g5','more',4],['g5','like',3],['g6','like',11],['g6','love',6],['g7','like',8],['g7','more',3],['g8','love',5],['g8','more',6]]
+    .forEach(([g,t,n])=>{ for(let i=0;i<n;i++) db.reactions.push({agendaId:g,type:t,deviceId:'m'+i}); });
+  const words = ['소통','배려','웃음','소통','존중','함께','소통이요','배려','신뢰','여유','함께','웃음','소통','공감','존중','따뜻함','협력','배려','함께 성장','소통과 존중','즐거움'];
+  const picks = [3,0,2,3,1,4,0,3,2,1,3,0,2,4,3,1,0,3,2,3,1];
+  words.forEach((w,i)=> db.survey.push({deviceId:'s'+i, q1:db.opts[picks[i]], q2:w}));
+  return db;
+})();
+function mockAiSummary(db){
+  const rcOf = id=>{ const r={like:0,love:0,more:0}; db.reactions.forEach(x=>{ if(x.agendaId===id) r[x.type]++; }); return r; };
+  let best=null, most=null;
+  db.agendas.forEach(a=>{
+    const r = rcOf(a.id), n = db.replies.filter(x=>x.agendaId===a.id).length, ansL = db.answers[a.id]||[], ans = ansL.length ? {dept:ansL.map(x=>x.dept).join('·')} : null, c = catOf(a.catId);
+    let t = ans ? `${ans.dept} 공식답변에 공감 ${r.like}건이 모여 대체로 수용하는 분위기임.` : (c.depts.length ? '공식답변이 아직 없어 담당부서의 검토와 답변이 필요함.' : `자유 제안으로 공감 ${r.like+r.love}건의 지지를 받음.`);
+    if(n) t += ` 답글 ${n}건에서 구체적인 보완 의견이 제시됨.`;
+    if(r.more>=3) t += ` 추가 논의 요청(${r.more}건)이 있어 후속 협의가 필요함.`;
+    db.summaries[a.id] = t;
+    const s = r.like+r.love+n; if(!best || s>best.s) best={a,s};
+    if(!most || r.more>most.m) most={a,m:r.more};
+  });
+  const tot = db.opts.map(o=>db.survey.filter(s=>s.q1===o).length), sum = tot.reduce((a,b)=>a+b,0);
+  const ti = tot.indexOf(Math.max(...tot)), words = tokenize(db.survey.map(s=>s.q2));
+  db.summaries.ALL = `총 ${db.agendas.length}개 세부안건에 답글 ${db.replies.length}건, 반응 ${db.reactions.length}건이 모여 전반적으로 활발한 참여가 이루어짐. `+
+    (best?`가장 공감도가 높은 안건은 '${best.a.title}'으로, 부서 답변에 대한 수용도가 높았음. `:'')+
+    (most&&most.m?`'${most.a.title}' 안건은 추가 논의 요청이 가장 많아 후속 협의체 구성이 필요함. `:'')+
+    (sum?`실시간 설문에서는 '${db.opts[ti]}'이(가) ${Math.round(tot[ti]/sum*100)}%로 가장 만족스러운 영역으로 꼽혔고, `:'')+
+    (words.length?`행복한 학교를 표현하는 말로 '${words[0][0]}'이(가) 가장 많이 언급되어 구성원 간 소통에 대한 기대가 큼을 확인함. `:'')+
+    '공식답변이 없는 안건은 담당부서의 조속한 회신이 필요함. (미리보기용 예시 총평)';
+}
+async function mockApi(a, p){
+  await new Promise(r=>setTimeout(r, a==='aiSummary' ? 1200 : 120));
+  const db = MOCK, now = new Date().toISOString();
+  const admin = ()=>{ if(String(p.pw||'')!==db.pw) throw new Error('담당자 비밀번호가 맞지 않습니다.'); };
+  const needOpen = ()=>{ if(db.status!=='open') throw new Error(db.status==='closed' ? '토론이 마감되었습니다.' : '아직 토론이 열리지 않았습니다.'); };
+  const nid = ()=> 'm'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  let pwForView = p.pw;
+  switch(a){
+    case 'getAll': break;
+    case 'login': admin(); break;
+    case 'addReply': needOpen(); db.replies.push({id:nid(), agendaId:p.agendaId, nickname:p.nickname||'익명', content:String(p.content).slice(0,500), deviceId:p.deviceId, createdAt:now}); break;
+    case 'deleteReply': { const r=db.replies.find(x=>x.id===p.id); if(!r) throw new Error('이미 삭제된 답글입니다.'); if(r.deviceId!==p.deviceId) admin(); db.replies=db.replies.filter(x=>x.id!==p.id); break; }
+    case 'toggleReaction': { needOpen(); const i=db.reactions.findIndex(x=>x.agendaId===p.agendaId&&x.type===p.type&&x.deviceId===p.deviceId); if(i>=0) db.reactions.splice(i,1); else db.reactions.push({agendaId:p.agendaId,type:p.type,deviceId:p.deviceId}); break; }
+    case 'saveAnswer': if(db.status==='closed') throw new Error('토론이 마감되었습니다.'); { const list=(db.answers[p.agendaId]||[]).filter(x=>x.dept!==p.dept); if(p.content) list.push({dept:p.dept,content:p.content,updatedAt:now}); const ag=db.agendas.find(x=>x.id===p.agendaId), order=catOf(ag.catId).depts; list.sort((x,y)=>order.indexOf(x.dept)-order.indexOf(y.dept)); if(list.length) db.answers[p.agendaId]=list; else delete db.answers[p.agendaId]; break; }
+    case 'submitSurvey': if(db.surveyStatus!=='running') throw new Error('설문이 진행 중이 아닙니다.'); if(db.survey.some(x=>x.deviceId===p.deviceId)) throw new Error('이미 응답하셨습니다.'); db.survey.push({deviceId:p.deviceId,q1:p.q1,q2:p.q2}); break;
+    case 'saveAgenda': admin(); if(p.id){ Object.assign(db.agendas.find(x=>x.id===p.id), {title:p.title,content:p.content,order:Number(p.order)||0}); } else db.agendas.push({id:nid(),catId:p.catId,title:p.title,content:p.content,order:Number(p.order)||0,createdAt:now}); break;
+    case 'deleteAgenda': admin(); db.agendas=db.agendas.filter(x=>x.id!==p.id); delete db.answers[p.id]; db.replies=db.replies.filter(x=>x.agendaId!==p.id); db.reactions=db.reactions.filter(x=>x.agendaId!==p.id); break;
+    case 'saveHighlight': admin(); if(p.id) Object.assign(db.highlights.find(x=>x.id===p.id), {title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); else db.highlights.push({id:nid(),title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); break;
+    case 'setReactionCounts': { admin(); const real={like:0,love:0,more:0}; db.reactions.forEach(x=>{ if(x.agendaId===p.agendaId) real[x.type]++; }); db.adj[p.agendaId]={}; ['like','love','more'].forEach(t=>{ db.adj[p.agendaId][t]=Number(p[t])-real[t]; }); break; }
+    case 'deleteHighlight': admin(); db.highlights=db.highlights.filter(x=>x.id!==p.id); break;
+    case 'setStatus': admin(); db.status=p.status; break;
+    case 'setSurveyStatus': admin(); if(p.surveyStatus==='running' && !db.q1 && !db.q2) throw new Error('먼저 설문 문항을 저장해 주세요.'); db.surveyStatus=p.surveyStatus; break;
+    case 'saveSurvey': admin(); db.q1=p.q1; db.opts=p.options; db.q2=p.q2; break;
+    case 'resetSurvey': admin(); db.survey=[]; break;
+    case 'saveSummary': admin(); db.summaries[p.agendaId]=p.text; break;
+    case 'setAiKey': admin(); db.aiKey=!!p.key; break;
+    case 'aiSummary': admin(); mockAiSummary(db); break;
+    case 'changePw': admin(); db.pw=p.newPw; pwForView=p.newPw; break;
+    default: throw new Error('알 수 없는 요청');
+  }
+  const dev = p.deviceId, isAdmin = String(pwForView||'')===db.pw, show = isAdmin || db.surveyStatus==='ended';
+  const reactions = {}, myReactions = {};
+  db.reactions.forEach(r=>{ (reactions[r.agendaId]=reactions[r.agendaId]||{like:0,love:0,more:0})[r.type]++; if(r.deviceId===dev) (myReactions[r.agendaId]=myReactions[r.agendaId]||[]).push(r.type); });
+  Object.keys(db.adj).forEach(id=>{ const m=(reactions[id]=reactions[id]||{like:0,love:0,more:0}); ['like','love','more'].forEach(t=>{ m[t]=Math.max(0,m[t]+(db.adj[id][t]||0)); }); });
+  return JSON.parse(JSON.stringify({
+    status:db.status,
+    agendas:db.agendas.slice().sort((x,y)=>(x.order-y.order)||x.createdAt.localeCompare(y.createdAt)),
+    answers:db.answers,
+    replies:db.replies.map(r=>({id:r.id,agendaId:r.agendaId,nickname:r.nickname,content:r.content,createdAt:r.createdAt,mine:r.deviceId===dev})),
+    reactions, myReactions,
+    highlights:db.highlights.slice().sort((x,y)=>x.order-y.order),
+    survey:{status:db.surveyStatus, q1:db.q1, options:db.opts, q2:db.q2,
+      counts: show ? db.opts.map(o=>db.survey.filter(s=>s.q1===o).length) : null,
+      texts: show ? db.survey.map(s=>s.q2).filter(Boolean) : [],
+      total:db.survey.length, answered:db.survey.some(s=>s.deviceId===dev)},
+    summaries: isAdmin ? db.summaries : {},
+    isAdmin, aiReady: isAdmin && db.aiKey, serverVersion: EXPECTED_SERVER
+  }));
+}
+
+/* ===================== 시작 ===================== */
+(function init(){
+  document.documentElement.style.fontSize = ui.fs+'px';
+  if(!API_URL) document.getElementById('demoBar').classList.remove('hidden');
+  document.getElementById('headArt').innerHTML = HERO_SVG;
+  const stage = document.getElementById('stage');
+  stage.addEventListener('click', e=>{
+    if(e.target.closest('a,button,input,textarea,details')) return;
+    const sel = window.getSelection && String(window.getSelection()); if(sel) return;
+    presGo(1);
+  });
+  stage.addEventListener('contextmenu', e=>{ e.preventDefault(); presGo(-1); });
+  api('getAll').then(d=>setData(d, true)).catch(e=>{ document.getElementById('main').innerHTML = `<div class="loading">연결에 실패했습니다.<br><small>${esc(e.message)}</small></div>`; });
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>
