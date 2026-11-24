@@ -244,6 +244,12 @@ textarea.inp{resize:vertical}
 .deck-bar.saved{background:#EEF8F3;border:1px solid #D3EDE2}
 .deck-bar.dirty{background:#FFF9E8;border:1px solid #F5E7BC}
 .deck-btns{display:flex;gap:6px;flex-wrap:wrap}
+.st-chip{margin-left:auto;align-self:flex-start;font-size:.68rem;font-weight:700;border-radius:99px;padding:0 7px;white-space:nowrap;border:1px solid}
+.st-chip.mine,.st-chip.saved{color:#3E8E70;background:#EEF8F3;border-color:#D3EDE2}
+.st-chip.lock{color:#8A6A5C;background:#F6F4F1;border-color:#E6E1DA}
+.st-chip.none{color:var(--faint);background:#fff;border-color:var(--line)}
+.tbl tr.cur td{background:#F7F6FE}
+.deck-bar.lockbar{background:#F6F4F1;border:1px solid #E6E1DA}
 .saved-chip{margin-left:auto;align-self:flex-start;font-size:.68rem;font-weight:700;color:#3E8E70;background:#EEF8F3;border:1px solid #D3EDE2;border-radius:99px;padding:0 7px;white-space:nowrap}
 /* Presentation (warm) */
 .pres{position:fixed;inset:0;z-index:100;background:#2B2320;display:flex;flex-direction:column}
@@ -400,7 +406,7 @@ body.is-saving .btn,body.is-saving .react{cursor:progress}
 // ↓ Apps Script 웹 앱 배포 주소(…/exec)를 따옴표 안에 넣으세요. 비워 두면 미리보기(데모) 모드로 열립니다.
 const API_URL = 'https://script.google.com/macros/s/AKfycbzyxqkFMQTlKtuK-U55f5e1g4a47gvXNWfWVKbSeDFFUozt04TTZOXOQ5ayR2pXiId4/exec';
 const POLL_MS = 12000;   // 자동 새로고침 간격(밀리초) — 바뀐 것이 없으면 아주 짧게 응답
-const EXPECTED_SERVER = '2026-11-24d';   // 이 화면과 짝이 맞는 Code.gs 버전
+const EXPECTED_SERVER = '2026-11-24e';   // 이 화면과 짝이 맞는 Code.gs 버전
 
 const CATEGORIES = [
   {id:'c1', name:'학교환경/급식', depts:['행정실','관리자','급식실'], color:'#C46A45', bg:'#FBDCCB', icon:'meal'},
@@ -412,6 +418,7 @@ const CATEGORIES = [
   {id:'c7', name:'기타안건', depts:[], color:'#6E7287', bg:'#E6E6EC', icon:'bulb'}
 ];
 const ETC_TEXT = '이런 의견도 있어요.';
+const ALL_DEPTS = []; CATEGORIES.forEach(c=>c.depts.forEach(d=>{ if(!ALL_DEPTS.includes(d)) ALL_DEPTS.push(d); }));
 const REACTIONS = [{k:'like',e:'👍',t:'공감'},{k:'love',e:'❤️',t:'좋아요'},{k:'more',e:'🙋',t:'더 논의해요'}];
 const COLORS = ['#A9AEF0','#F7B79C','#9ED8C2','#F5D67F','#EFA9C4'];
 const CLOUD_COLORS = ['#575FC2','#C46A45','#3E8E70','#B5527C','#3C78AE','#9A7A1E'];
@@ -481,7 +488,7 @@ const ui = {
   tab:'discuss', open:new Set(), answerEdit:{}, drafts:{nick:store.get('dtf_nick','')},
   fs:Number(store.get('dtf_fs',16))||16, big:false, aiBusy:false,
   pw:null, adTab:'agendas', adCat:'c1', editAg:null, editHl:null, svInit:false,
-  pres:{cat:'c1', sel:{}, showRep:{}, slides:[], idx:0, zoom:1, on:false, addl:{}, addOpen:false, dirty:{}, loaded:{}}
+  pres:{dept:null, inc:{}, showRep:{}, slides:[], idx:0, zoom:1, on:false, addOpen:false, dirty:{}, loaded:{}}
 };
 
 /* ===================== 통신 ===================== */
@@ -877,89 +884,131 @@ function renderBig(){
 }
 
 /* ----- 발표 모드 ----- */
-function presItems(){
-  const P = ui.pres, c = catOf(P.cat);
-  return S.agendas.filter(a=>a.catId===P.cat).map(a=>({id:a.id, title:a.title,
-    sub: (c.depts.length ? (ansOf(a.id).length ? '공식답변 '+ansOf(a.id).length+'건' : '공식답변 없음')+' · ' : '') + '답글 '+repliesOf(a.id).length}));
-}
-function isSel(id){ return ui.pres.sel[id] !== false; }
-function viewPresent(){
-  const P = ui.pres; syncDeck(P.cat);
-  const c = catOf(P.cat), items = presItems();
-  const ek = 'pres_extra_'+P.cat, endk = 'pres_end_'+P.cat;
-  const deckBar = deckBarHtml();
-  let h = `<div class="page-h"><div><h2>발표 모드</h2><p>발표할 안건 항목을 선택하고, 슬라이드에 넣을 세부안건과 추가의견을 정리하세요. 발표 중에는 화면을 클릭하거나 ← → 키로 넘깁니다.</p></div></div>
-    <div class="pick">${CATEGORIES.map(x=>`<button class="pick-btn ${P.cat===x.id?'on':''}" style="--ac:${x.color};--acbg:${x.bg}" onclick="presCat('${x.id}')"><span class="pi">${icon(x.icon)}</span><span>${esc(x.name)}<small>${esc(x.depts.length?'담당: '+x.depts.join(', '):ETC_TEXT)}</small></span>${(S.presDecks||{})[x.id] ? '<span class="saved-chip">저장됨</span>' : ''}</button>`).join('')}</div>
-    ${deckBar}
-    <div class="setup" style="margin-top:12px">
-    <section class="panel pad" style="margin:0"><div class="sel-head"><b>세부안건 선택 (${items.filter(i=>isSel(i.id)).length}/${items.length})</b><span><button class="link" onclick="presAll(true)">전체 선택</button> · <button class="link" onclick="presAll(false)">전체 해제</button></span></div>`;
-  h += items.length ? `<div class="sel-list">${items.map(it=>`<label class="sel-item"><input type="checkbox" ${isSel(it.id)?'checked':''} onchange="presSel('${it.id}',this.checked)"><span>${esc(it.title)}</span><small>${esc(it.sub)}</small></label>`).join('')}</div>` : '<p class="empty">등록된 세부안건이 없습니다.</p>';
-  const added = addlIds();
-  h += `<div class="addl"><div class="sel-head" style="margin:16px 0 8px"><b>다른 항목에서 추가한 안건 (${added.length})</b><button class="btn ghost sm" onclick="ui.pres.addOpen=!ui.pres.addOpen;render()">${P.addOpen?'닫기':'+ 다른 항목의 안건 추가'}</button></div>`;
-  if(added.length) h += `<div class="sel-list">${added.map(id=>{ const a=S.agendas.find(x=>x.id===id), ac=catOf(a.catId); return `<div class="sel-item addl-item" style="--ac:${ac.color};--acbg:${ac.bg}"><span class="mini-tag">${esc(ac.name)}</span><span>${esc(a.title)}</span><button class="link del" onclick="presAdd('${id}',false)">빼기</button></div>`; }).join('')}</div>`;
-  else if(!P.addOpen) h += '<p class="hint" style="margin:0">다른 부서 항목의 세부안건도 이 발표에 넣을 수 있습니다.</p>';
-  if(P.addOpen){
-    const others = CATEGORIES.filter(x=>x.id!==P.cat).map(x=>({x, list:S.agendas.filter(a=>a.catId===x.id)})).filter(g=>g.list.length);
-    h += `<div class="addl-pop">${others.length ? others.map(g=>`<div class="addl-group" style="--ac:${g.x.color};--acbg:${g.x.bg}"><div class="addl-h"><span class="pi">${icon(g.x.icon)}</span>${esc(g.x.name)}</div>${g.list.map(a=>`<label class="sel-item"><input type="checkbox" ${added.includes(a.id)?'checked':''} onchange="presAdd('${a.id}',this.checked)"><span>${esc(a.title)}</span><small>${S.answers[a.id]?'공식답변 ✓ · ':''}답글 ${repliesOf(a.id).length}</small></label>`).join('')}</div>`).join('') : '<p class="empty">다른 항목에 등록된 세부안건이 없습니다.</p>'}</div>`;
+/* ===== 발표 모드: 부서별 발표자료 ===== */
+function dkey(d){ return 'd'+ALL_DEPTS.indexOf(d); }
+function deptCats(d){ return CATEGORIES.filter(c=>c.depts.includes(d)); }
+function ownAgendas(d){ const ids = deptCats(d).map(c=>c.id); return S.agendas.filter(a=>ids.includes(a.catId)).sort((x,y)=>ids.indexOf(x.catId)-ids.indexOf(y.catId) || x.order-y.order); }
+function deckOf(d){ return (S.presDecks||{})[d]; }
+function isAdminView(){ return !!ui.pw; }
+function canEdit(d){ const k = deckOf(d); return isAdminView() || !k || k.mine; }
+function incOf(d){ const P=ui.pres; return (P.inc[d]||[]).filter(id=>S.agendas.some(a=>a.id===id)); }
+/* 서버에 저장된 발표자료를 불러옴 (이 노트북에서 고치는 중이면 덮어쓰지 않음) */
+function syncDeck(d){
+  const P = ui.pres, k = deckOf(d), dk = dkey(d);
+  if(k && k.data && !P.dirty[d] && P.loaded[d] !== k.updatedAt){
+    P.inc[d] = (k.data.include||[]).slice();
+    P.showRep[d] = k.data.showReplies !== false;
+    ui.drafts['pres_extra_'+dk] = k.data.extra || '';
+    ui.drafts['pres_end_'+dk] = k.data.end || '';
+    P.loaded[d] = k.updatedAt;
   }
-  h += `</div><label class="switch"><input type="checkbox" ${P.showRep[P.cat]!==false?'checked':''} onchange="ui.pres.showRep[ui.pres.cat]=this.checked;presDirty()"><span>답글도 슬라이드에 표시</span></label></section>
+  if(!P.inc[d]) P.inc[d] = ownAgendas(d).map(a=>a.id);    // 처음엔 우리 부서 담당 안건 모두 선택
+  if(ui.drafts['pres_extra_'+dk] === undefined) ui.drafts['pres_extra_'+dk] = '';
+  if(ui.drafts['pres_end_'+dk] === undefined) ui.drafts['pres_end_'+dk] = '';
+}
+function deptStatus(d){
+  const k = deckOf(d);
+  if(!k) return {cls:'none', txt:'미저장'};
+  if(k.mine) return {cls:'mine', txt:'이 노트북에 저장됨'};
+  return {cls:'lock', txt: isAdminView() ? '저장됨' : '🔒 다른 노트북'};
+}
+function deckBarHtml(){
+  const P = ui.pres, d = P.dept, k = deckOf(d), dirty = !!P.dirty[d];
+  return `<div class="deck-bar ${k ? (dirty ? 'dirty' : 'saved') : ''}"><div>${k
+      ? `<b>✓ ${esc(d)} 발표자료 저장됨</b> <span class="muted">· ${fmt(k.updatedAt)} 저장${isAdminView() && !k.mine ? ' · 사회자 보기' : ' · 사회자 노트북에서 바로 열 수 있어요'}</span>`
+      : `<b>${esc(d)} 발표자료가 아직 저장되지 않았습니다.</b> <span class="muted">정리한 뒤 저장하면 사회자 노트북에서 바로 발표할 수 있어요.</span>`}
+      ${dirty ? `<div class="warn sm" style="margin-top:2px">${isAdminView() && k && !k.mine ? '이 노트북에서만 바뀐 내용입니다. 부서 원본은 그대로예요.' : '저장하지 않은 변경 사항이 있습니다.'}</div>` : ''}</div>
+    <div class="deck-btns">${k && dirty ? '<button class="btn ghost sm" onclick="reloadPres()">저장된 내용으로 되돌리기</button>' : ''}${isAdminView() && k && !k.mine ? '' : '<button class="btn sm" onclick="savePres()">💾 발표자료 저장</button>'}</div></div>`;
+}
+function viewPresent(){
+  const P = ui.pres, admin = isAdminView();
+  let h = `<div class="page-h"><div><h2>발표 모드</h2><p>${admin
+    ? '사회자 보기: 모든 부서의 발표자료 저장 상황을 보고, 원하는 부서 자료를 열어 바로 발표할 수 있습니다.'
+    : '발표할 <b>부서</b>를 고르고 발표자료를 정리해 저장하세요. 저장한 자료는 이 노트북과 사회자 노트북에서만 볼 수 있습니다.'}</p></div></div>`;
+  if(admin){
+    const rows = ALL_DEPTS.map(d=>{ const k=deckOf(d), st=deptStatus(d), n = k && k.data ? (k.data.include||[]).filter(id=>S.agendas.some(a=>a.id===id)).length : 0;
+      return `<tr class="${P.dept===d?'cur':''}"><td><b>${esc(d)}</b></td><td class="sm muted">${esc(deptCats(d).map(c=>c.name).join(', '))}</td>
+        <td>${k ? `<span class="st-chip saved">✓ 저장됨</span> <span class="muted sm">${fmt(k.updatedAt)}</span>` : '<span class="st-chip none">미저장</span>'}</td>
+        <td class="num">${k ? n+'건' : '—'}</td>
+        <td class="nowrap"><button class="btn ${k?'':'ghost '}sm" onclick="presDept('${esc(d)}')">${k ? '열기' : '직접 만들기'}</button>${k ? ` <button class="link del" onclick="resetPres('${esc(d)}')">잠금 해제</button>` : ''}</td></tr>`; }).join('');
+    const savedN = ALL_DEPTS.filter(d=>deckOf(d)).length;
+    h += `<section class="panel pad"><h3>부서별 발표자료 <small>저장 ${savedN} / ${ALL_DEPTS.length}개 부서</small></h3>
+      <table class="tbl"><thead><tr><th>부서</th><th>담당 항목</th><th>상태</th><th class="num">세부안건</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="hint" style="margin:8px 0 0">잠금 해제: 부서 자료를 지워서, 그 부서가 다른 노트북에서 새로 만들 수 있게 합니다.</p></section>`;
+  } else {
+    h += `<div class="pick">${ALL_DEPTS.map(d=>{ const c=deptCats(d)[0], st=deptStatus(d);
+      return `<button class="pick-btn ${P.dept===d?'on':''}" style="--ac:${c.color};--acbg:${c.bg}" onclick="presDept('${esc(d)}')"><span class="pi">${icon(c.icon)}</span><span>${esc(d)}<small>${esc(deptCats(d).map(x=>x.name).join(', '))}</small></span><span class="st-chip ${st.cls}">${st.txt}</span></button>`; }).join('')}</div>
+      <p class="hint" style="margin:6px 0 0">사회자는 <b>담당자</b> 탭에서 로그인하면 모든 부서의 발표자료를 볼 수 있습니다.</p>`;
+  }
+  if(!P.dept) return h + (admin ? '' : '<div class="deck-bar" style="justify-content:center"><span class="muted">위에서 발표할 부서를 골라 주세요.</span></div>');
+  const d = P.dept;
+  if(!canEdit(d)){
+    return h + `<div class="deck-bar lockbar"><div><b>🔒 ${esc(d)} 발표자료는 다른 노트북에서 만들어졌습니다.</b><br><span class="muted">처음 저장한 노트북에서만 보고 고칠 수 있어요. 노트북을 바꿔야 하면 사이트 담당자에게 '잠금 해제'를 요청하세요.</span></div></div>`;
+  }
+  syncDeck(d);
+  const dk = dkey(d), inc = incOf(d), own = ownAgendas(d), ownIds = own.map(a=>a.id);
+  const others = inc.filter(id=>!ownIds.includes(id));
+  h += `<div id="deckEditor"></div>` + deckBarHtml() + `<div class="setup" style="margin-top:12px"><section class="panel pad" style="margin:0">`;
+  deptCats(d).forEach(c=>{
+    const list = own.filter(a=>a.catId===c.id);
+    h += `<div class="sel-head"><b style="color:${c.color}">${esc(c.name)} <span class="muted" style="font-weight:500">(${list.filter(a=>inc.includes(a.id)).length}/${list.length})</span></b>${list.length?`<span><button class="link" onclick="presAll('${c.id}',true)">전체 선택</button> · <button class="link" onclick="presAll('${c.id}',false)">전체 해제</button></span>`:''}</div>`;
+    h += list.length ? `<div class="sel-list" style="margin-bottom:12px">${list.map(a=>`<label class="sel-item"><input type="checkbox" ${inc.includes(a.id)?'checked':''} onchange="presSel('${a.id}',this.checked)"><span>${esc(a.title)}</span><small>${ansOf(a.id).length?'공식답변 '+ansOf(a.id).length+'건 · ':''}답글 ${repliesOf(a.id).length}</small></label>`).join('')}</div>` : '<p class="empty" style="padding:8px">등록된 세부안건이 없습니다.</p>';
+  });
+  h += `<div class="addl"><div class="sel-head" style="margin:8px 0 8px"><b>다른 항목에서 추가한 안건 (${others.length})</b><button class="btn ghost sm" onclick="ui.pres.addOpen=!ui.pres.addOpen;render()">${P.addOpen?'닫기':'+ 다른 항목의 안건 추가'}</button></div>`;
+  if(others.length) h += `<div class="sel-list">${others.map(id=>{ const a=S.agendas.find(x=>x.id===id), ac=catOf(a.catId); return `<div class="sel-item addl-item" style="--ac:${ac.color};--acbg:${ac.bg}"><span class="mini-tag">${esc(ac.name)}</span><span>${esc(a.title)}</span><button class="link del" onclick="presSel('${id}',false)">빼기</button></div>`; }).join('')}</div>`;
+  if(P.addOpen){
+    const groups = CATEGORIES.filter(x=>!deptCats(d).includes(x)).map(x=>({x, list:S.agendas.filter(a=>a.catId===x.id)})).filter(g=>g.list.length);
+    h += `<div class="addl-pop">${groups.length ? groups.map(g=>`<div class="addl-group" style="--ac:${g.x.color};--acbg:${g.x.bg}"><div class="addl-h"><span class="pi">${icon(g.x.icon)}</span>${esc(g.x.name)}</div>${g.list.map(a=>`<label class="sel-item"><input type="checkbox" ${inc.includes(a.id)?'checked':''} onchange="presSel('${a.id}',this.checked)"><span>${esc(a.title)}</span><small>답글 ${repliesOf(a.id).length}</small></label>`).join('')}</div>`).join('') : '<p class="empty">다른 항목에 등록된 세부안건이 없습니다.</p>'}</div>`;
+  }
+  h += `</div><label class="switch"><input type="checkbox" ${P.showRep[d]!==false?'checked':''} onchange="ui.pres.showRep[ui.pres.dept]=this.checked;presDirty()"><span>답글도 슬라이드에 표시</span></label></section>
     <section class="panel pad" style="margin:0">
       <label class="lbl" style="margin-top:0">발표자 추가의견 <span class="muted" style="font-weight:500">(선택)</span></label>
-      <textarea class="inp" rows="6" data-draft="${ek}" placeholder="발표 때 덧붙일 의견을 적으면 마지막 페이지 앞에 '추가의견' 슬라이드로 들어갑니다."></textarea>
+      <textarea class="inp" rows="6" data-draft="pres_extra_${dk}" placeholder="발표 때 덧붙일 의견을 적으면 마지막 페이지 앞에 '추가의견' 슬라이드로 들어갑니다."></textarea>
       <label class="lbl">마지막 페이지 문구 <span class="muted" style="font-weight:500">(선택)</span></label>
-      <input class="inp" data-draft="${endk}" maxlength="60" placeholder="감사합니다.">
-      <div class="hint">비워 두면 '감사합니다.'만 표시됩니다. 위의 <b>발표자료 저장</b>을 눌러야 다른 노트북에서도 보입니다.</div>
+      <input class="inp" data-draft="pres_end_${dk}" maxlength="60" placeholder="감사합니다.">
+      <div class="hint">비워 두면 '감사합니다.'만 표시됩니다. <b>발표자료 저장</b>을 눌러야 사회자 노트북에서도 보입니다.</div>
     </section></div>
-    <button class="btn lg navy" onclick="startPres()">발표 시작 ▶</button>`;
+    <button class="btn lg navy" onclick="startPres()">${esc(d)} 발표 시작 ▶</button>`;
   return h;
 }
-function presCat(c){ ui.pres.cat = c; ui.pres.addOpen = false; render(); }
-function deckBarHtml(){
-  const P = ui.pres, deck = (S.presDecks||{})[P.cat], dirty = !!P.dirty[P.cat];
-  return `<div class="deck-bar ${deck ? (dirty ? 'dirty' : 'saved') : ''}"><div>${deck
-      ? `<b>✓ 저장된 발표자료</b> <span class="muted">· ${fmt(deck.updatedAt)} 저장 · 어느 노트북에서 열어도 이 내용으로 발표됩니다</span>`
-      : `<b>아직 저장된 발표자료가 없습니다.</b> <span class="muted">아래 내용을 정리하고 저장하면 사회자 노트북에서 바로 발표할 수 있어요.</span>`}
-      ${dirty ? '<div class="warn sm" style="margin-top:2px">저장하지 않은 변경 사항이 있습니다.</div>' : ''}</div>
-    <div class="deck-btns">${deck && dirty ? '<button class="btn ghost sm" onclick="reloadPres()">저장된 내용으로 되돌리기</button>' : ''}<button class="btn sm" onclick="savePres()">💾 발표자료 저장</button></div></div>`;
+function presDept(d){
+  const P = ui.pres; P.dept = d; P.addOpen = false; render();
+  const el = document.getElementById('deckEditor'); if(el && isAdminView()) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
-function presDirty(c){ ui.pres.dirty[c || ui.pres.cat] = true; render(); }
-/* 서버에 저장된 발표자료를 화면에 불러옴 (이 노트북에서 고치는 중이면 덮어쓰지 않음) */
-function syncDeck(c){
-  const P = ui.pres, deck = (S.presDecks||{})[c];
-  if(deck && !P.dirty[c] && P.loaded[c] !== deck.updatedAt){
-    const ex = deck.exclude || [];
-    S.agendas.filter(a=>a.catId===c).forEach(a=>{ P.sel[a.id] = !ex.includes(a.id); });
-    P.addl[c] = (deck.addl || []).slice();
-    P.showRep[c] = deck.showReplies !== false;
-    ui.drafts['pres_extra_'+c] = deck.extra || '';
-    ui.drafts['pres_end_'+c] = deck.end || '';
-    P.loaded[c] = deck.updatedAt;
-  }
-  if(ui.drafts['pres_extra_'+c] === undefined) ui.drafts['pres_extra_'+c] = '';
-  if(ui.drafts['pres_end_'+c] === undefined) ui.drafts['pres_end_'+c] = '';
+function presDirty(){ ui.pres.dirty[ui.pres.dept] = true; render(); }
+function presSel(id, on){
+  const P = ui.pres, d = P.dept, list = incOf(d).filter(x=>x!==id);
+  if(on) list.push(id);
+  P.inc[d] = list; presDirty();
+}
+function presAll(catId, on){
+  const P = ui.pres, d = P.dept, ids = S.agendas.filter(a=>a.catId===catId).map(a=>a.id);
+  let list = incOf(d).filter(x=>!ids.includes(x));
+  if(on) list = list.concat(ids);
+  P.inc[d] = list; presDirty();
+}
+function deckData(d){
+  const P = ui.pres, dk = dkey(d);
+  return {include: incOf(d), showReplies: P.showRep[d] !== false, extra: val('pres_extra_'+dk), end: val('pres_end_'+dk)};
 }
 async function savePres(){
-  const P = ui.pres, c = P.cat;
-  const data = {
-    exclude: presItems().filter(i=>!isSel(i.id)).map(i=>i.id),
-    addl: addlIds(), showReplies: P.showRep[c] !== false,
-    extra: val('pres_extra_'+c), end: val('pres_end_'+c)
-  };
-  if(await call('savePres', {catId:c, data}, '발표자료를 저장했습니다. 사회자 노트북에서 바로 발표할 수 있어요.')){
-    P.dirty[c] = false; P.loaded[c] = ((S.presDecks||{})[c]||{}).updatedAt; render();
+  const P = ui.pres, d = P.dept;
+  if(await call('savePres', {dept:d, data:deckData(d)}, `${d} 발표자료를 저장했습니다. 사회자 노트북에서 바로 열 수 있어요.`)){
+    P.dirty[d] = false; P.loaded[d] = (deckOf(d)||{}).updatedAt; render();
   }
 }
 async function reloadPres(){
   if(!(await ask('이 노트북에서 고친 내용을 버리고, 저장된 발표자료로 되돌릴까요?'))) return;
-  const P = ui.pres; P.dirty[P.cat] = false; P.loaded[P.cat] = null; render();
+  const P = ui.pres; P.dirty[P.dept] = false; P.loaded[P.dept] = null; render();
 }
-function addlIds(){ const P=ui.pres; return (P.addl[P.cat]||[]).filter(id=>S.agendas.some(a=>a.id===id && a.catId!==P.cat)); }
-function presAdd(id, on){ const P=ui.pres, list=(P.addl[P.cat]||[]).filter(x=>x!==id); if(on) list.push(id); P.addl[P.cat]=list; presDirty(); }
-function presSel(id, on){ ui.pres.sel[id] = on; presDirty(); }
-function presAll(on){ presItems().forEach(i=>ui.pres.sel[i.id]=on); presDirty(); }
+async function resetPres(d){
+  if(!(await ask(`${d} 발표자료를 지우고 잠금을 해제할까요?\n그 부서가 어느 노트북에서든 새로 만들 수 있게 됩니다. 저장된 내용은 되돌릴 수 없어요.`))) return;
+  if(await call('resetPres', {dept:d}, `${d} 발표자료 잠금을 해제했습니다.`)){ const P=ui.pres; delete P.inc[d]; P.dirty[d]=false; P.loaded[d]=null; render(); }
+}
 function startPres(){
-  const P = ui.pres, ids = presItems().filter(i=>isSel(i.id)).map(i=>i.id).concat(addlIds());
-  const extra = (val('pres_extra_'+P.cat)||'').trim();
+  const P = ui.pres, d = P.dept, own = ownAgendas(d).map(a=>a.id), inc = incOf(d);
+  const ids = own.filter(id=>inc.includes(id)).concat(inc.filter(id=>!own.includes(id)));
+  const extra = (val('pres_extra_'+dkey(d))||'').trim();
   if(!ids.length && !extra){ toast('세부안건을 하나 이상 선택하거나 추가의견을 입력해 주세요.', true); return; }
   P.slides = [{t:'cover'}, ...ids.map(id=>({t:'item', id}))];
   if(extra) P.slides.push({t:'extra'});
@@ -983,32 +1032,33 @@ function fitSlide(){
   sl.style.fontSize = (w/56*ui.pres.zoom)+'px';
 }
 function renderSlide(){
-  const P = ui.pres, s = P.slides[P.idx], c = catOf(P.cat), sl = document.getElementById('slide');
+  const P = ui.pres, s = P.slides[P.idx], d = P.dept, cats = deptCats(d), c = cats[0], dk = dkey(d), sl = document.getElementById('slide');
   sl.style.setProperty('--sac', c.color); sl.style.setProperty('--sacbg', c.bg);
   sl.classList.toggle('warm', s.t==='cover' || s.t==='end');
   const nItems = P.slides.filter(x=>x.t==='item').length;
   let h = '';
   if(s.t==='cover'){
-    h = `<div class="sl-cover"><div class="sl-cover-text"><span class="sl-badge">행복한 학교를 위한 대토론회 · 안건 ${catNo(c)}</span>
+    const catIds = cats.map(x=>x.id);
+    h = `<div class="sl-cover"><div class="sl-cover-text"><span class="sl-badge">행복한 학교를 위한 대토론회 · 부서 발표</span>
       <div class="sl-cic">${icon(c.icon)}</div>
-      <h1>${esc(c.name)}</h1><p>${esc(deptText(c))}</p>
-      <div class="sl-count">세부안건 ${nItems}건${(()=>{ const n=P.slides.filter(x=>x.t==='item' && (S.agendas.find(a=>a.id===x.id)||{}).catId!==P.cat).length; return n?` (다른 항목 ${n}건 포함)`:''; })()}${P.slides.some(x=>x.t==='extra')?' · 추가의견':''}</div></div>
+      <h1>${esc(d)}</h1><p>${esc(cats.map(x=>x.name).join(' · '))}</p>
+      <div class="sl-count">세부안건 ${nItems}건${(()=>{ const n=P.slides.filter(x=>x.t==='item' && !catIds.includes((S.agendas.find(a=>a.id===x.id)||{}).catId)).length; return n?` (다른 항목 ${n}건 포함)`:''; })()}${P.slides.some(x=>x.t==='extra')?' · 추가의견':''}</div></div>
       <div class="sl-cover-art">${HERO_SVG}</div></div>`;
   } else if(s.t==='end'){
-    const txt = (ui.drafts['pres_end_'+P.cat]||'').trim() || '감사합니다.';
+    const txt = (ui.drafts['pres_end_'+dk]||'').trim() || '감사합니다.';
     h = `<div class="sl-end">${END_SVG}<h1>${esc(txt)}</h1></div>`;
   } else if(s.t==='extra'){
-    h = `<div class="sl-item"><span class="sl-tag">${icon(c.icon)} ${esc(c.name)} · 추가의견</span><h2>발표자 추가의견</h2><div class="sl-extra">${esc((ui.drafts['pres_extra_'+P.cat]||'').trim())}</div></div>`;
+    h = `<div class="sl-item"><span class="sl-tag">${icon(c.icon)} ${esc(d)} · 추가의견</span><h2>발표자 추가의견</h2><div class="sl-extra">${esc((ui.drafts['pres_extra_'+dk]||'').trim())}</div></div>`;
   } else {
     const a = S.agendas.find(v=>v.id===s.id);
     if(!a) h = '<p>삭제된 세부안건입니다.</p>';
     else {
       const ans = ansOf(a.id), reps = repliesOf(a.id), ac = catOf(a.catId);
       sl.style.setProperty('--sac', ac.color); sl.style.setProperty('--sacbg', ac.bg);
-      h = `<div class="sl-item"><span class="sl-tag">${icon(ac.icon)} ${esc(ac.name)}${ac.id!==c.id?' · 추가 안건':''} · ${pad2(P.idx)} / ${pad2(nItems)}</span><h2>${esc(a.title)}</h2>
+      h = `<div class="sl-item"><span class="sl-tag">${icon(ac.icon)} ${esc(ac.name)}${!cats.includes(ac)?' · 추가 안건':''} · ${pad2(P.idx)} / ${pad2(nItems)}</span><h2>${esc(a.title)}</h2>
         ${a.content ? `<div class="sl-q">${nl(a.content)}</div>` : ''}
         ${ac.depts.length ? (ans.length ? ans.map(x=>`<div class="sl-ans"><div class="sl-ans-h">공식답변 · ${esc(x.dept)}</div><div>${nl(x.content)}</div></div>`).join('') : '<div class="sl-ans none">공식답변 준비 중입니다.</div>') : ''}
-        ${P.showRep[P.cat]!==false && reps.length ? `<div class="sl-reps"><div class="sl-reps-h">선생님 의견 ${reps.length}</div><div class="sl-rep-grid">${reps.map(r=>`<div class="sl-rep"><b>${esc(r.nickname)}</b>${nl(r.content)}</div>`).join('')}</div></div>` : ''}
+        ${P.showRep[d]!==false && reps.length ? `<div class="sl-reps"><div class="sl-reps-h">선생님 의견 ${reps.length}</div><div class="sl-rep-grid">${reps.map(r=>`<div class="sl-rep"><b>${esc(r.nickname)}</b>${nl(r.content)}</div>`).join('')}</div></div>` : ''}
       </div>`;
     }
   }
@@ -1266,7 +1316,8 @@ document.getElementById('main').addEventListener('input', e=>{
   ui.drafts[k] = e.target.value;
   if(k==='nick') store.set('dtf_nick', e.target.value);
   if(k.startsWith('pres_extra_') || k.startsWith('pres_end_')){
-    ui.pres.dirty[k.replace(/^pres_(extra|end)_/, '')] = true;
+    const di = Number(k.replace(/^pres_(extra|end)_d/, ''));
+    if(ALL_DEPTS[di]) ui.pres.dirty[ALL_DEPTS[di]] = true;
     const bar = document.querySelector('.deck-bar');   // 입력칸은 그대로 두고 안내줄만 바꿈
     if(bar) bar.outerHTML = deckBarHtml();
   }
@@ -1363,7 +1414,8 @@ async function mockApi(a, p){
     case 'deleteAgenda': admin(); db.agendas=db.agendas.filter(x=>x.id!==p.id); delete db.answers[p.id]; db.replies=db.replies.filter(x=>x.agendaId!==p.id); db.reactions=db.reactions.filter(x=>x.agendaId!==p.id); break;
     case 'saveHighlight': admin(); if(p.id) Object.assign(db.highlights.find(x=>x.id===p.id), {title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); else db.highlights.push({id:nid(),title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); break;
     case 'setReactionCounts': { admin(); const real={like:0,love:0,more:0}; db.reactions.forEach(x=>{ if(x.agendaId===p.agendaId) real[x.type]++; }); db.adj[p.agendaId]={}; ['like','love','more'].forEach(t=>{ db.adj[p.agendaId][t]=Number(p[t])-real[t]; }); break; }
-    case 'savePres': db.decks[p.catId] = Object.assign({}, p.data, {updatedAt:now}); break;
+    case 'savePres': { const isAdm = String(p.pw||'')===db.pw, ex = db.decks[p.dept]; if(ex && ex.owner!==p.deviceId && !isAdm) throw new Error(p.dept+' 발표자료는 다른 노트북에서 만들어져 이 노트북에서는 고칠 수 없어요.'); db.decks[p.dept] = {data:p.data, owner: ex ? ex.owner : p.deviceId, updatedAt:now}; break; }
+    case 'resetPres': admin(); delete db.decks[p.dept]; break;
     case 'deleteHighlight': admin(); db.highlights=db.highlights.filter(x=>x.id!==p.id); break;
     case 'setStatus': admin(); db.status=p.status; break;
     case 'setSurveyStatus': admin(); if(p.surveyStatus==='running' && !db.q1 && !db.q2) throw new Error('먼저 설문 문항을 저장해 주세요.'); db.surveyStatus=p.surveyStatus; break;
@@ -1391,7 +1443,7 @@ async function mockApi(a, p){
       texts: show ? db.survey.map(s=>s.q2).filter(Boolean) : [],
       total:db.survey.length, answered:db.survey.some(s=>s.deviceId===dev)},
     summaries: isAdmin ? db.summaries : {},
-    presDecks: JSON.parse(JSON.stringify(db.decks)),
+    presDecks: Object.fromEntries(Object.entries(db.decks).map(([k,v])=>{ const mine = v.owner===dev; const o={saved:true, mine, updatedAt:v.updatedAt}; if(mine || isAdmin) o.data = JSON.parse(JSON.stringify(v.data)); return [k,o]; })),
     isAdmin, aiReady: isAdmin && db.aiKey, serverVersion: EXPECTED_SERVER
   }));
 }
