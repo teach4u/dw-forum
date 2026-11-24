@@ -146,6 +146,7 @@ textarea.inp{resize:vertical}
 .reply .rh b{font-weight:700}
 .reply .rh span{color:var(--faint);font-size:.76rem}
 .reply .rh .del{margin-left:auto;font-size:.76rem}
+.reply.pending{opacity:.6}
 .reply .rt{font-size:.93rem;color:#454959}
 .reply-form{display:flex;gap:8px;margin-top:10px;align-items:flex-end}
 .rf-box{flex:1;position:relative;border:1px solid var(--line);border-radius:12px;background:#fff;transition:.12s}
@@ -393,8 +394,8 @@ body.is-saving .btn,body.is-saving .react{cursor:progress}
 /* ===================== 설정 ===================== */
 // ↓ Apps Script 웹 앱 배포 주소(…/exec)를 따옴표 안에 넣으세요. 비워 두면 미리보기(데모) 모드로 열립니다.
 const API_URL = 'https://script.google.com/macros/s/AKfycbzyxqkFMQTlKtuK-U55f5e1g4a47gvXNWfWVKbSeDFFUozt04TTZOXOQ5ayR2pXiId4/exec';
-const POLL_MS = 8000;
-const EXPECTED_SERVER = '2026-11-24';   // 이 화면과 짝이 맞는 Code.gs 버전   // 자동 새로고침 간격(밀리초)
+const POLL_MS = 8000;   // 자동 새로고침 간격(밀리초)
+const EXPECTED_SERVER = '2026-11-24b';   // 이 화면과 짝이 맞는 Code.gs 버전
 
 const CATEGORIES = [
   {id:'c1', name:'학교환경/급식', depts:['행정실','관리자','급식실'], color:'#C46A45', bg:'#FBDCCB', icon:'meal'},
@@ -515,8 +516,29 @@ function setData(d, force){
   if(!force && isTyping()){ pending = true; return; }
   render();
 }
+/* 답글·반응: 화면에 먼저 반영하고, 서버 저장은 뒤에서 차례로 처리 */
+let qChain = Promise.resolve(), qPending = 0;
+function quick(action, p, apply, okMsg, onFail){
+  apply(); render();
+  qPending++;
+  qChain = qChain.then(async ()=>{
+    try{
+      const d = await api(action, p);
+      qPending--;
+      if(qPending === 0) setData(d, true);
+      if(okMsg) toast(okMsg);
+    }catch(e){
+      qPending--;
+      if(onFail) onFail();
+      let m = e.message || '저장하지 못했습니다.';
+      if(/알 수 없는 요청/.test(m)) m = '서버(Apps Script)가 이전 버전입니다. 새 버전으로 다시 배포해 주세요.';
+      toast(m + ' 다시 시도해 주세요.', true);
+      if(qPending === 0){ try{ setData(await api('getAll'), true); }catch(_){ render(); } }
+    }
+  });
+}
 async function poll(){
-  if(busy || document.hidden) return;
+  if(busy || qPending || document.hidden) return;
   try{ setData(await api('getAll'), false); }catch(e){}
 }
 
@@ -642,7 +664,7 @@ function agendaBlock(a, i, c){
   }
   const mine = S.myReactions[a.id] || [];
   const reacts = REACTIONS.map(r=>`<button class="react ${mine.includes(r.k)?'on':''}" ${st!=='open'?'disabled':''} onclick="react('${a.id}','${r.k}')">${r.e} ${r.t}<b>${rc(a.id)[r.k]||0}</b></button>`).join('');
-  const repHtml = reps.map(r=>`<div class="reply"><div class="rh"><b>${esc(r.nickname)}</b><span>${fmt(r.createdAt)}</span>${r.mine?`<button class="link del" onclick="delReply('${r.id}')">삭제</button>`:''}</div><div class="rt">${nl(r.content)}</div></div>`).join('');
+  const repHtml = reps.map(r=>`<div class="reply${r.pending?' pending':''}"><div class="rh"><b>${esc(r.nickname)}</b><span>${r.pending ? '전송 중…' : fmt(r.createdAt)}</span>${r.mine && !r.pending ?`<button class="link del" onclick="delReply('${r.id}')">삭제</button>`:''}</div><div class="rt">${nl(r.content)}</div></div>`).join('');
   const form = st==='open' ? `<div class="reply-form"><div class="rf-box"><textarea data-draft="r_${a.id}" rows="2" maxlength="500" placeholder="의견을 남겨 주세요 (닉네임으로 표시됩니다)"></textarea>
       <div class="rf-tools"><button class="emoji-btn ${ui.emoji===a.id?'on':''}" title="이모티콘" onclick="toggleEmoji('${a.id}')">😊 ▾</button>${QUICK_EMOJIS.map(e=>`<button class="emoji-quick" onclick="insertEmoji('${a.id}','${e}')">${e}</button>`).join('')}</div>
       ${ui.emoji===a.id ? `<div class="emoji-pop">${EMOJIS.map(e=>`<button onclick="insertEmoji('${a.id}','${e}')">${e}</button>`).join('')}</div>` : ''}</div>
@@ -698,9 +720,14 @@ async function sendReply(id){
   if(!content){ toast('답글 내용을 입력해 주세요.', true); return; }
   let nick = nickName(), auto = false;
   if(!nick){ nick = randomNick(); auto = true; }
-  if(await call('addReply', {agendaId:id, nickname:nick, content}, auto ? `랜덤 닉네임 '${nick}'(으)로 등록했습니다.` : '답글을 등록했습니다.')){
-    ui.drafts['r_'+id] = ''; ui.emoji = null; render();
-  }
+  const tmpId = 'tmp' + Date.now();
+  quick('addReply', {agendaId:id, nickname:nick, content}, ()=>{
+    S.replies.push({id:tmpId, agendaId:id, nickname:nick, content, createdAt:new Date().toISOString(), mine:true, pending:true});
+    ui.drafts['r_'+id] = ''; ui.emoji = null;
+  }, auto ? `랜덤 닉네임 '${nick}'(으)로 등록했습니다.` : '', ()=>{
+    S.replies = S.replies.filter(x=>x.id!==tmpId);
+    if(!ui.drafts['r_'+id]) ui.drafts['r_'+id] = content;
+  });
 }
 function toggleEmoji(id){ ui.emoji = ui.emoji===id ? null : id; render(); }
 function insertEmoji(id, e){
@@ -712,7 +739,14 @@ function insertEmoji(id, e){
   el.focus(); const p = st + e.length; try{ el.setSelectionRange(p, p); }catch(err){}
 }
 document.addEventListener('click', e=>{ if(ui.emoji && !e.target.closest('.rf-box')){ ui.emoji = null; render(); } });
-function react(id, k){ call('toggleReaction', {agendaId:id, type:k}); }
+function react(id, k){
+  quick('toggleReaction', {agendaId:id, type:k}, ()=>{
+    const mine = S.myReactions[id] = (S.myReactions[id] || []).slice();
+    const cnt = S.reactions[id] = Object.assign({like:0, love:0, more:0}, S.reactions[id]);
+    const i = mine.indexOf(k);
+    if(i >= 0){ mine.splice(i, 1); cnt[k] = Math.max(0, cnt[k]-1); } else { mine.push(k); cnt[k]++; }
+  });
+}
 async function delReply(id){ if(await ask('이 답글을 삭제할까요?')) call('deleteReply', {id}, '삭제했습니다.'); }
 
 /* ----- 실시간 설문 ----- */
