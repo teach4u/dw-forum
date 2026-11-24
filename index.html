@@ -394,8 +394,8 @@ body.is-saving .btn,body.is-saving .react{cursor:progress}
 /* ===================== 설정 ===================== */
 // ↓ Apps Script 웹 앱 배포 주소(…/exec)를 따옴표 안에 넣으세요. 비워 두면 미리보기(데모) 모드로 열립니다.
 const API_URL = 'https://script.google.com/macros/s/AKfycbzyxqkFMQTlKtuK-U55f5e1g4a47gvXNWfWVKbSeDFFUozt04TTZOXOQ5ayR2pXiId4/exec';
-const POLL_MS = 8000;   // 자동 새로고침 간격(밀리초)
-const EXPECTED_SERVER = '2026-11-24b';   // 이 화면과 짝이 맞는 Code.gs 버전
+const POLL_MS = 12000;   // 자동 새로고침 간격(밀리초) — 바뀐 것이 없으면 아주 짧게 응답
+const EXPECTED_SERVER = '2026-11-24c';   // 이 화면과 짝이 맞는 Code.gs 버전
 
 const CATEGORIES = [
   {id:'c1', name:'학교환경/급식', depts:['행정실','관리자','급식실'], color:'#C46A45', bg:'#FBDCCB', icon:'meal'},
@@ -471,7 +471,7 @@ const store = {
 let deviceId = store.get('dtf_device','');
 if(!deviceId){ deviceId='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,10); store.set('dtf_device',deviceId); }
 
-let S = null, lastJson = '', pending = false, busy = 0;
+let S = null, lastJson = '', pending = false, busy = 0, lastVer = '';
 const ui = {
   tab:'discuss', open:new Set(), answerEdit:{}, drafts:{nick:store.get('dtf_nick','')},
   fs:Number(store.get('dtf_fs',16))||16, big:false, aiBusy:false,
@@ -490,6 +490,8 @@ async function api(action, p){
       body: JSON.stringify(Object.assign({action, deviceId}, p))});
     const j = await res.json();
     if(!j.ok) throw new Error(j.error || '오류가 발생했습니다.');
+    if(j.ver) lastVer = j.ver;
+    if(j.same) return {__same:true};
     return j.data;
   } finally { busy--; }
 }
@@ -510,6 +512,7 @@ async function call(action, p, okMsg){
   finally{ clearTimeout(t); box.classList.remove('show'); document.body.classList.remove('is-saving'); saving = false; }
 }
 function setData(d, force){
+  if(!d || d.__same) return;
   const j = JSON.stringify(d);
   if(!force && j === lastJson) return;
   lastJson = j; S = d;
@@ -539,7 +542,7 @@ function quick(action, p, apply, okMsg, onFail){
 }
 async function poll(){
   if(busy || qPending || document.hidden) return;
-  try{ setData(await api('getAll'), false); }catch(e){}
+  try{ setData(await api('getAll', {since:lastVer}), false); }catch(e){}
 }
 
 /* ===================== 도우미 ===================== */
@@ -702,7 +705,12 @@ function editAnswer(id, dept){
 }
 async function delAnswer(id, dept){
   if(!(await ask(`${dept}의 공식답변을 삭제할까요?\n삭제하면 되돌릴 수 없습니다.`))) return;
-  if(await call('saveAnswer', {agendaId:id, dept, content:''}, `${dept} 공식답변을 삭제했습니다.`)){ delete ui.answerEdit[id]; render(); }
+  const before = ansOf(id).slice();
+  quick('saveAnswer', {agendaId:id, dept, content:''}, ()=>{
+    S.answers[id] = before.filter(x=>x.dept!==dept);
+    if(!S.answers[id].length) delete S.answers[id];
+    delete ui.answerEdit[id];
+  }, `${dept} 공식답변을 삭제했습니다.`, ()=>{ S.answers[id] = before; });
 }
 function cancelAnswer(id){ delete ui.answerEdit[id]; render(); }
 async function saveAnswer(id){
@@ -711,9 +719,19 @@ async function saveAnswer(id){
   const exists = ansOf(id).some(x=>x.dept===dept);
   if(!content && !exists){ toast('공식답변 내용을 입력해 주세요.', true); return; }
   if(!content && !(await ask(`내용이 비어 있습니다. ${dept}의 공식답변을 삭제할까요?`))) return;
-  if(await call('saveAnswer', {agendaId:id, dept, content}, content ? `${dept} 공식답변을 저장했습니다.` : '공식답변을 삭제했습니다.')){
-    delete ui.answerEdit[id]; delete ui.drafts['a_'+id]; render();
-  }
+  const before = ansOf(id).slice(), a = S.agendas.find(x=>x.id===id), order = catOf(a.catId).depts;
+  quick('saveAnswer', {agendaId:id, dept, content}, ()=>{
+    const list = before.filter(x=>x.dept!==dept);
+    if(content) list.push({dept, content, updatedAt:new Date().toISOString()});
+    list.sort((x,y)=>order.indexOf(x.dept)-order.indexOf(y.dept));
+    if(list.length) S.answers[id] = list; else delete S.answers[id];
+    delete ui.answerEdit[id]; delete ui.drafts['a_'+id];
+  }, content ? `${dept} 공식답변을 저장했습니다.` : '공식답변을 삭제했습니다.', ()=>{
+    // 실패하면 원래 상태로 돌리고 입력하던 내용으로 작성 창을 다시 엶
+    S.answers[id] = before; if(!before.length) delete S.answers[id];
+    ui.answerEdit[id] = ed.dept ? {dept:ed.dept} : {dept:null};
+    ui.drafts['a_'+id] = content; if(!ed.dept) ui.drafts['ad_'+id] = dept;
+  });
 }
 async function sendReply(id){
   const content = val('r_'+id).trim();
@@ -979,7 +997,7 @@ function viewAdmin(){
 async function login(){
   const pw = val('pw');
   if(!pw){ toast('비밀번호를 입력해 주세요.', true); return; }
-  try{ const d = await api('login', {pw}); ui.pw = pw; ui.drafts.pw = ''; setData(await api('getAll'), true); toast('담당자로 로그인했습니다.'); }
+  try{ const d = await api('login', {pw}); ui.pw = pw; ui.drafts.pw = ''; setData(await api('getAll', {since:''}), true); toast('담당자로 로그인했습니다.'); }
   catch(e){ toast(e.message, true); }
 }
 function logout(){ ui.pw = null; ui.svInit = false; Object.keys(ui.drafts).filter(k=>k.startsWith('sm_')).forEach(k=>delete ui.drafts[k]); poll(); render(); }
@@ -1134,7 +1152,10 @@ function adDash(){
     <div style="display:flex;gap:8px"><input type="password" class="inp" data-draft="aikey" placeholder="Gemini API 키"><button class="btn" onclick="saveAiKey()">저장</button></div></section>`;
   return h;
 }
-function saveSum(id){ call('saveSummary', {agendaId:id, text:val('sm_'+id)}, '총평을 저장했습니다.'); }
+function saveSum(id){
+  const text = val('sm_'+id), before = S.summaries[id];
+  quick('saveSummary', {agendaId:id, text}, ()=>{ S.summaries[id] = text; }, '총평을 저장했습니다.', ()=>{ S.summaries[id] = before; });
+}
 async function saveAiKey(){ const k = val('aikey').trim(); if(!k){ toast('키를 입력해 주세요.', true); return; } if(await call('setAiKey', {key:k}, 'AI 키를 저장했습니다.')){ ui.drafts.aikey=''; render(); } }
 async function runAi(){
   const has = Object.values(S.summaries||{}).some(v=>String(v).trim());
