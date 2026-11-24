@@ -240,6 +240,11 @@ textarea.inp{resize:vertical}
 .addl-h .pi{width:24px;height:24px;border-radius:7px;background:var(--acbg);display:grid;place-items:center;font-size:.85rem}
 .addl-item{cursor:default;background:#fff}
 .sel-item .mini-tag{font-size:.72rem;font-weight:700;color:var(--ac);background:var(--acbg);border-radius:99px;padding:1px 8px;white-space:nowrap;flex:0 0 auto}
+.deck-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding:13px 16px;border-radius:12px;background:#fff;border:1px dashed #DCD6CF;font-size:.9rem}
+.deck-bar.saved{background:#EEF8F3;border:1px solid #D3EDE2}
+.deck-bar.dirty{background:#FFF9E8;border:1px solid #F5E7BC}
+.deck-btns{display:flex;gap:6px;flex-wrap:wrap}
+.saved-chip{margin-left:auto;align-self:flex-start;font-size:.68rem;font-weight:700;color:#3E8E70;background:#EEF8F3;border:1px solid #D3EDE2;border-radius:99px;padding:0 7px;white-space:nowrap}
 /* Presentation (warm) */
 .pres{position:fixed;inset:0;z-index:100;background:#2B2320;display:flex;flex-direction:column}
 .stage{flex:1;display:grid;place-items:center;overflow:hidden;cursor:pointer}
@@ -395,7 +400,7 @@ body.is-saving .btn,body.is-saving .react{cursor:progress}
 // ↓ Apps Script 웹 앱 배포 주소(…/exec)를 따옴표 안에 넣으세요. 비워 두면 미리보기(데모) 모드로 열립니다.
 const API_URL = 'https://script.google.com/macros/s/AKfycbzyxqkFMQTlKtuK-U55f5e1g4a47gvXNWfWVKbSeDFFUozt04TTZOXOQ5ayR2pXiId4/exec';
 const POLL_MS = 12000;   // 자동 새로고침 간격(밀리초) — 바뀐 것이 없으면 아주 짧게 응답
-const EXPECTED_SERVER = '2026-11-24c';   // 이 화면과 짝이 맞는 Code.gs 버전
+const EXPECTED_SERVER = '2026-11-24d';   // 이 화면과 짝이 맞는 Code.gs 버전
 
 const CATEGORIES = [
   {id:'c1', name:'학교환경/급식', depts:['행정실','관리자','급식실'], color:'#C46A45', bg:'#FBDCCB', icon:'meal'},
@@ -476,7 +481,7 @@ const ui = {
   tab:'discuss', open:new Set(), answerEdit:{}, drafts:{nick:store.get('dtf_nick','')},
   fs:Number(store.get('dtf_fs',16))||16, big:false, aiBusy:false,
   pw:null, adTab:'agendas', adCat:'c1', editAg:null, editHl:null, svInit:false,
-  pres:{cat:'c1', sel:{}, showReplies:true, slides:[], idx:0, zoom:1, on:false, addl:{}, addOpen:false}
+  pres:{cat:'c1', sel:{}, showRep:{}, slides:[], idx:0, zoom:1, on:false, addl:{}, addOpen:false, dirty:{}, loaded:{}}
 };
 
 /* ===================== 통신 ===================== */
@@ -879,13 +884,14 @@ function presItems(){
 }
 function isSel(id){ return ui.pres.sel[id] !== false; }
 function viewPresent(){
-  const P = ui.pres, c = catOf(P.cat), items = presItems();
-  const ek = 'pres_extra_'+P.cat;
-  if(ui.drafts[ek]===undefined) ui.drafts[ek] = store.get('dtf_'+ek, '');
-  if(ui.drafts.pres_end===undefined) ui.drafts.pres_end = store.get('dtf_pres_end', '');
+  const P = ui.pres; syncDeck(P.cat);
+  const c = catOf(P.cat), items = presItems();
+  const ek = 'pres_extra_'+P.cat, endk = 'pres_end_'+P.cat;
+  const deckBar = deckBarHtml();
   let h = `<div class="page-h"><div><h2>발표 모드</h2><p>발표할 안건 항목을 선택하고, 슬라이드에 넣을 세부안건과 추가의견을 정리하세요. 발표 중에는 화면을 클릭하거나 ← → 키로 넘깁니다.</p></div></div>
-    <div class="pick">${CATEGORIES.map(x=>`<button class="pick-btn ${P.cat===x.id?'on':''}" style="--ac:${x.color};--acbg:${x.bg}" onclick="presCat('${x.id}')"><span class="pi">${icon(x.icon)}</span><span>${esc(x.name)}<small>${esc(x.depts.length?'담당: '+x.depts.join(', '):ETC_TEXT)}</small></span></button>`).join('')}</div>
-    <div class="setup" style="margin-top:16px">
+    <div class="pick">${CATEGORIES.map(x=>`<button class="pick-btn ${P.cat===x.id?'on':''}" style="--ac:${x.color};--acbg:${x.bg}" onclick="presCat('${x.id}')"><span class="pi">${icon(x.icon)}</span><span>${esc(x.name)}<small>${esc(x.depts.length?'담당: '+x.depts.join(', '):ETC_TEXT)}</small></span>${(S.presDecks||{})[x.id] ? '<span class="saved-chip">저장됨</span>' : ''}</button>`).join('')}</div>
+    ${deckBar}
+    <div class="setup" style="margin-top:12px">
     <section class="panel pad" style="margin:0"><div class="sel-head"><b>세부안건 선택 (${items.filter(i=>isSel(i.id)).length}/${items.length})</b><span><button class="link" onclick="presAll(true)">전체 선택</button> · <button class="link" onclick="presAll(false)">전체 해제</button></span></div>`;
   h += items.length ? `<div class="sel-list">${items.map(it=>`<label class="sel-item"><input type="checkbox" ${isSel(it.id)?'checked':''} onchange="presSel('${it.id}',this.checked)"><span>${esc(it.title)}</span><small>${esc(it.sub)}</small></label>`).join('')}</div>` : '<p class="empty">등록된 세부안건이 없습니다.</p>';
   const added = addlIds();
@@ -896,22 +902,61 @@ function viewPresent(){
     const others = CATEGORIES.filter(x=>x.id!==P.cat).map(x=>({x, list:S.agendas.filter(a=>a.catId===x.id)})).filter(g=>g.list.length);
     h += `<div class="addl-pop">${others.length ? others.map(g=>`<div class="addl-group" style="--ac:${g.x.color};--acbg:${g.x.bg}"><div class="addl-h"><span class="pi">${icon(g.x.icon)}</span>${esc(g.x.name)}</div>${g.list.map(a=>`<label class="sel-item"><input type="checkbox" ${added.includes(a.id)?'checked':''} onchange="presAdd('${a.id}',this.checked)"><span>${esc(a.title)}</span><small>${S.answers[a.id]?'공식답변 ✓ · ':''}답글 ${repliesOf(a.id).length}</small></label>`).join('')}</div>`).join('') : '<p class="empty">다른 항목에 등록된 세부안건이 없습니다.</p>'}</div>`;
   }
-  h += `</div><label class="switch"><input type="checkbox" ${P.showReplies?'checked':''} onchange="ui.pres.showReplies=this.checked"><span>답글도 슬라이드에 표시</span></label></section>
+  h += `</div><label class="switch"><input type="checkbox" ${P.showRep[P.cat]!==false?'checked':''} onchange="ui.pres.showRep[ui.pres.cat]=this.checked;presDirty()"><span>답글도 슬라이드에 표시</span></label></section>
     <section class="panel pad" style="margin:0">
       <label class="lbl" style="margin-top:0">발표자 추가의견 <span class="muted" style="font-weight:500">(선택)</span></label>
       <textarea class="inp" rows="6" data-draft="${ek}" placeholder="발표 때 덧붙일 의견을 적으면 마지막 페이지 앞에 '추가의견' 슬라이드로 들어갑니다."></textarea>
       <label class="lbl">마지막 페이지 문구 <span class="muted" style="font-weight:500">(선택)</span></label>
-      <input class="inp" data-draft="pres_end" maxlength="60" placeholder="감사합니다.">
-      <div class="hint">비워 두면 '감사합니다.'만 표시됩니다. 입력한 내용은 이 기기에 저장됩니다.</div>
+      <input class="inp" data-draft="${endk}" maxlength="60" placeholder="감사합니다.">
+      <div class="hint">비워 두면 '감사합니다.'만 표시됩니다. 위의 <b>발표자료 저장</b>을 눌러야 다른 노트북에서도 보입니다.</div>
     </section></div>
     <button class="btn lg navy" onclick="startPres()">발표 시작 ▶</button>`;
   return h;
 }
 function presCat(c){ ui.pres.cat = c; ui.pres.addOpen = false; render(); }
+function deckBarHtml(){
+  const P = ui.pres, deck = (S.presDecks||{})[P.cat], dirty = !!P.dirty[P.cat];
+  return `<div class="deck-bar ${deck ? (dirty ? 'dirty' : 'saved') : ''}"><div>${deck
+      ? `<b>✓ 저장된 발표자료</b> <span class="muted">· ${fmt(deck.updatedAt)} 저장 · 어느 노트북에서 열어도 이 내용으로 발표됩니다</span>`
+      : `<b>아직 저장된 발표자료가 없습니다.</b> <span class="muted">아래 내용을 정리하고 저장하면 사회자 노트북에서 바로 발표할 수 있어요.</span>`}
+      ${dirty ? '<div class="warn sm" style="margin-top:2px">저장하지 않은 변경 사항이 있습니다.</div>' : ''}</div>
+    <div class="deck-btns">${deck && dirty ? '<button class="btn ghost sm" onclick="reloadPres()">저장된 내용으로 되돌리기</button>' : ''}<button class="btn sm" onclick="savePres()">💾 발표자료 저장</button></div></div>`;
+}
+function presDirty(c){ ui.pres.dirty[c || ui.pres.cat] = true; render(); }
+/* 서버에 저장된 발표자료를 화면에 불러옴 (이 노트북에서 고치는 중이면 덮어쓰지 않음) */
+function syncDeck(c){
+  const P = ui.pres, deck = (S.presDecks||{})[c];
+  if(deck && !P.dirty[c] && P.loaded[c] !== deck.updatedAt){
+    const ex = deck.exclude || [];
+    S.agendas.filter(a=>a.catId===c).forEach(a=>{ P.sel[a.id] = !ex.includes(a.id); });
+    P.addl[c] = (deck.addl || []).slice();
+    P.showRep[c] = deck.showReplies !== false;
+    ui.drafts['pres_extra_'+c] = deck.extra || '';
+    ui.drafts['pres_end_'+c] = deck.end || '';
+    P.loaded[c] = deck.updatedAt;
+  }
+  if(ui.drafts['pres_extra_'+c] === undefined) ui.drafts['pres_extra_'+c] = '';
+  if(ui.drafts['pres_end_'+c] === undefined) ui.drafts['pres_end_'+c] = '';
+}
+async function savePres(){
+  const P = ui.pres, c = P.cat;
+  const data = {
+    exclude: presItems().filter(i=>!isSel(i.id)).map(i=>i.id),
+    addl: addlIds(), showReplies: P.showRep[c] !== false,
+    extra: val('pres_extra_'+c), end: val('pres_end_'+c)
+  };
+  if(await call('savePres', {catId:c, data}, '발표자료를 저장했습니다. 사회자 노트북에서 바로 발표할 수 있어요.')){
+    P.dirty[c] = false; P.loaded[c] = ((S.presDecks||{})[c]||{}).updatedAt; render();
+  }
+}
+async function reloadPres(){
+  if(!(await ask('이 노트북에서 고친 내용을 버리고, 저장된 발표자료로 되돌릴까요?'))) return;
+  const P = ui.pres; P.dirty[P.cat] = false; P.loaded[P.cat] = null; render();
+}
 function addlIds(){ const P=ui.pres; return (P.addl[P.cat]||[]).filter(id=>S.agendas.some(a=>a.id===id && a.catId!==P.cat)); }
-function presAdd(id, on){ const P=ui.pres, list=(P.addl[P.cat]||[]).filter(x=>x!==id); if(on) list.push(id); P.addl[P.cat]=list; render(); }
-function presSel(id, on){ ui.pres.sel[id] = on; render(); }
-function presAll(on){ presItems().forEach(i=>ui.pres.sel[i.id]=on); render(); }
+function presAdd(id, on){ const P=ui.pres, list=(P.addl[P.cat]||[]).filter(x=>x!==id); if(on) list.push(id); P.addl[P.cat]=list; presDirty(); }
+function presSel(id, on){ ui.pres.sel[id] = on; presDirty(); }
+function presAll(on){ presItems().forEach(i=>ui.pres.sel[i.id]=on); presDirty(); }
 function startPres(){
   const P = ui.pres, ids = presItems().filter(i=>isSel(i.id)).map(i=>i.id).concat(addlIds());
   const extra = (val('pres_extra_'+P.cat)||'').trim();
@@ -950,7 +995,7 @@ function renderSlide(){
       <div class="sl-count">세부안건 ${nItems}건${(()=>{ const n=P.slides.filter(x=>x.t==='item' && (S.agendas.find(a=>a.id===x.id)||{}).catId!==P.cat).length; return n?` (다른 항목 ${n}건 포함)`:''; })()}${P.slides.some(x=>x.t==='extra')?' · 추가의견':''}</div></div>
       <div class="sl-cover-art">${HERO_SVG}</div></div>`;
   } else if(s.t==='end'){
-    const txt = (ui.drafts.pres_end||'').trim() || '감사합니다.';
+    const txt = (ui.drafts['pres_end_'+P.cat]||'').trim() || '감사합니다.';
     h = `<div class="sl-end">${END_SVG}<h1>${esc(txt)}</h1></div>`;
   } else if(s.t==='extra'){
     h = `<div class="sl-item"><span class="sl-tag">${icon(c.icon)} ${esc(c.name)} · 추가의견</span><h2>발표자 추가의견</h2><div class="sl-extra">${esc((ui.drafts['pres_extra_'+P.cat]||'').trim())}</div></div>`;
@@ -963,7 +1008,7 @@ function renderSlide(){
       h = `<div class="sl-item"><span class="sl-tag">${icon(ac.icon)} ${esc(ac.name)}${ac.id!==c.id?' · 추가 안건':''} · ${pad2(P.idx)} / ${pad2(nItems)}</span><h2>${esc(a.title)}</h2>
         ${a.content ? `<div class="sl-q">${nl(a.content)}</div>` : ''}
         ${ac.depts.length ? (ans.length ? ans.map(x=>`<div class="sl-ans"><div class="sl-ans-h">공식답변 · ${esc(x.dept)}</div><div>${nl(x.content)}</div></div>`).join('') : '<div class="sl-ans none">공식답변 준비 중입니다.</div>') : ''}
-        ${P.showReplies && reps.length ? `<div class="sl-reps"><div class="sl-reps-h">선생님 의견 ${reps.length}</div><div class="sl-rep-grid">${reps.map(r=>`<div class="sl-rep"><b>${esc(r.nickname)}</b>${nl(r.content)}</div>`).join('')}</div></div>` : ''}
+        ${P.showRep[P.cat]!==false && reps.length ? `<div class="sl-reps"><div class="sl-reps-h">선생님 의견 ${reps.length}</div><div class="sl-rep-grid">${reps.map(r=>`<div class="sl-rep"><b>${esc(r.nickname)}</b>${nl(r.content)}</div>`).join('')}</div></div>` : ''}
       </div>`;
     }
   }
@@ -1220,7 +1265,11 @@ document.getElementById('main').addEventListener('input', e=>{
   if(!k) return;
   ui.drafts[k] = e.target.value;
   if(k==='nick') store.set('dtf_nick', e.target.value);
-  if(k.startsWith('pres_')) store.set('dtf_'+k, e.target.value);
+  if(k.startsWith('pres_extra_') || k.startsWith('pres_end_')){
+    ui.pres.dirty[k.replace(/^pres_(extra|end)_/, '')] = true;
+    const bar = document.querySelector('.deck-bar');   // 입력칸은 그대로 두고 안내줄만 바꿈
+    if(bar) bar.outerHTML = deckBarHtml();
+  }
 });
 document.getElementById('main').addEventListener('change', e=>{
   const k = e.target.dataset && e.target.dataset.draft;
@@ -1259,7 +1308,7 @@ const MOCK = (()=>{
       {id:'r4',agendaId:'g7',nickname:'3학년 담임',content:'학생들에게도 공유되면 좋겠습니다.',deviceId:'x4',createdAt:ago(40)},
       {id:'r5',agendaId:'g8',nickname:'다정한 부엉이',content:'유휴 교실 한 곳을 휴게실로 전환하는 방안을 검토해 주세요.',deviceId:'x5',createdAt:ago(20)}
     ],
-    reactions:[], adj:{}, survey:[],
+    reactions:[], adj:{}, decks:{}, survey:[],
     highlights:[
       {id:'h1',title:'학생 주도 축제 운영',content:'학생회가 기획부터 운영까지 맡아 참여 만족도 92%를 기록했습니다.',dept:'학생부',order:1},
       {id:'h2',title:'진로 탐색 주간 운영',content:'지역 대학·기관과 연계한 진로 체험 프로그램 30여 개를 운영했습니다.',dept:'진로부',order:2},
@@ -1314,6 +1363,7 @@ async function mockApi(a, p){
     case 'deleteAgenda': admin(); db.agendas=db.agendas.filter(x=>x.id!==p.id); delete db.answers[p.id]; db.replies=db.replies.filter(x=>x.agendaId!==p.id); db.reactions=db.reactions.filter(x=>x.agendaId!==p.id); break;
     case 'saveHighlight': admin(); if(p.id) Object.assign(db.highlights.find(x=>x.id===p.id), {title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); else db.highlights.push({id:nid(),title:p.title,content:p.content,dept:p.dept,order:Number(p.order)||0}); break;
     case 'setReactionCounts': { admin(); const real={like:0,love:0,more:0}; db.reactions.forEach(x=>{ if(x.agendaId===p.agendaId) real[x.type]++; }); db.adj[p.agendaId]={}; ['like','love','more'].forEach(t=>{ db.adj[p.agendaId][t]=Number(p[t])-real[t]; }); break; }
+    case 'savePres': db.decks[p.catId] = Object.assign({}, p.data, {updatedAt:now}); break;
     case 'deleteHighlight': admin(); db.highlights=db.highlights.filter(x=>x.id!==p.id); break;
     case 'setStatus': admin(); db.status=p.status; break;
     case 'setSurveyStatus': admin(); if(p.surveyStatus==='running' && !db.q1 && !db.q2) throw new Error('먼저 설문 문항을 저장해 주세요.'); db.surveyStatus=p.surveyStatus; break;
@@ -1341,6 +1391,7 @@ async function mockApi(a, p){
       texts: show ? db.survey.map(s=>s.q2).filter(Boolean) : [],
       total:db.survey.length, answered:db.survey.some(s=>s.deviceId===dev)},
     summaries: isAdmin ? db.summaries : {},
+    presDecks: JSON.parse(JSON.stringify(db.decks)),
     isAdmin, aiReady: isAdmin && db.aiKey, serverVersion: EXPECTED_SERVER
   }));
 }
